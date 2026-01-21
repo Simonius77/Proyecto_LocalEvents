@@ -6,8 +6,10 @@ use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
@@ -27,6 +29,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/user', [ProfileController::class, 'user']);
     Route::get('/user/signin', [ProfileController::class, 'user']);
     Route::put('/user', [ProfileController::class, 'update']);
+   
 
     Route::get('abilities', function(Request $request) {
         return $request->user()->roles()->with('permissions')
@@ -40,5 +43,12 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     });
 });
 
+Route::apiResource('category-list', CategoryController::class);
+/*
 Route::get('category-list', [CategoryController::class, 'getList']);
+
+Route::get('/posts/{post}', [PostController::class, 'show']);
+
+Route::delete('/posts/{post}', [PostController::class, 'destroy']);
+*/
 
