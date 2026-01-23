@@ -10,7 +10,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post ::all();
+        $posts = Post::all();
         return $posts;
     }
 
@@ -27,7 +27,8 @@ class PostController extends Controller
     }
     
     public function store(Request $request){
-        $post = Post::create($request->all());
+        $data = $request ->validated();
+        $post = Post::create($data);
         return $post;
     }
             
