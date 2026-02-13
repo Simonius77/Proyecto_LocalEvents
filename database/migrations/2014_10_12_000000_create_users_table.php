@@ -13,11 +13,11 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('usuarios', function (Blueprint $table) {
-            $table->id('id_usuario'); // PK: Identificador único
+            $table->id('id_usuario'); // PK: Identificador Unico
             $table->string('nombre'); // Nombre del usuario
             $table->string('apellidos'); // Apellidos
-            $table->string('telefono')->nullable(); // Teléfono
-            $table->string('email')->unique(); // Email (único)
+            $table->string('telefono')->nullable(); // Telefono
+            $table->string('email')->unique(); // Email (unico)
             $table->string('password'); // Contraseña encriptada
             $table->decimal('latitud', 10, 8)->nullable(); // Ubicación
             $table->decimal('longitud', 11, 8)->nullable(); // Ubicación

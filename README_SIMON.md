@@ -11,4 +11,9 @@ categories php artisan make:model categoria -c -m
 reservas php artisan make:model reserva -c -m 
 pagos php artisan make:model pago -c -m 
 
+Models modificados para que coincidan con los migrations
+ users modificado
+ categorias modificado
+ 
+
 
