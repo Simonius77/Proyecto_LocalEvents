@@ -23,35 +23,39 @@ class UserController extends Controller
      * @return AnonymousResourceCollection
      */
 
-    public function index()
+     public function index()
     {
-        $orderColumn = request('order_column', 'created_at');
-        if (!in_array($orderColumn, ['id', 'name', 'created_at'])) {
-            $orderColumn = 'created_at';
-        }
-        $orderDirection = request('order_direction', 'desc');
-        if (!in_array($orderDirection, ['asc', 'desc'])) {
-            $orderDirection = 'desc';
-        }
-        $users = User::
-        when(request('search_id'), function ($query) {
-            $query->where('id', request('search_id'));
-        })
-            ->when(request('search_title'), function ($query) {
-                $query->where('name', 'like', '%'.request('search_title').'%');
-            })
-            ->when(request('search_global'), function ($query) {
-                $query->where(function($q) {
-                    $q->where('id', request('search_global'))
-                        ->orWhere('name', 'like', '%'.request('search_global').'%');
-
-                });
-            })
-            ->orderBy($orderColumn, $orderDirection)
-            ->paginate(500);
-
-        return UserResource::collection($users);
+         $orderColumn = request('order_column', 'created_at');
+     
+         if (!in_array($orderColumn, ['id_usuario', 'nombre', 'created_at'])) {
+             $orderColumn = 'created_at';
+         }
+     
+         $orderDirection = request('order_direction', 'desc');
+     
+         if (!in_array($orderDirection, ['asc', 'desc'])) {
+             $orderDirection = 'desc';
+         }
+     
+         $users = User::
+             when(request('search_id'), function ($query) {
+                 $query->where('id_usuario', request('search_id'));
+             })
+             ->when(request('search_nombre'), function ($query) {
+                 $query->where('nombre', 'like', '%'.request('search_nombre').'%');
+             })
+             ->when(request('search_global'), function ($query) {
+                 $query->where(function($q) {
+                     $q->where('id_usuario', request('search_global'))
+                       ->orWhere('nombre', 'like', '%'.request('search_global').'%');
+                 });
+             })
+             ->orderBy($orderColumn, $orderDirection)
+             ->paginate(500);
+     
+         return UserResource::collection($users);
     }
+     
 
     // userswithtasks removed
 
@@ -66,18 +70,24 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $role = Role::find($request->role_id);
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->surname1 = $request->surname1;
-        $user->surname2 = $request->surname2;
 
+        $user = new User();
+        $user->nombre = $request->nombre;
+        $user->apellidos = $request->apellidos;
+        $user->telefono = $request->telefono;
+        $user->email = $request->email;
+        $user->latitud = $request->latitud;
+        $user->longitud = $request->longitud;
+        $user->fecha_nacimiento = $request->fecha_nacimiento;
+        $user->rol = $request->rol;
+        $user->activo = $request->activo;
         $user->password = Hash::make($request->password);
 
         if ($user->save()) {
             if ($role) {
                 $user->assignRole($role);
             }
+
             return new UserResource($user);
         }
     }
@@ -105,14 +115,20 @@ class UserController extends Controller
     {
         $role = Role::find($request->role_id);
 
-        $user->name = $request->name;
+        $user->nombre = $request->nombre;
+        $user->apellidos = $request->apellidos;
+        $user->telefono = $request->telefono;
         $user->email = $request->email;
-        $user->surname1 = $request->surname1;
-        $user->surname2 = $request->surname2;
+        $user->latitud = $request->latitud;
+        $user->longitud = $request->longitud;
+        $user->fecha_nacimiento = $request->fecha_nacimiento;
+        $user->rol = $request->rol;
+        $user->activo = $request->activo;
 
-        if(!empty($request->password)) {
-            $user->password = Hash::make($request->password) ?? $user->password;
+        if (!empty($request->password)) {
+            $user->password = Hash::make($request->password);
         }
+
         if ($user->save()) {
             if ($role) {
                 $user->syncRoles($role);
@@ -123,13 +139,15 @@ class UserController extends Controller
     }
 
 
+
     public function updateimg(Request $request)
     {
         $user = User::find($request->id);
       
         if($request->hasFile('picture')) {
             $user->media()->delete();
-            $media = $user->addMediaFromRequest('picture')->preservingOriginal()->toMediaCollection('images-users');
+            $media = $user->addMediaFromRequest('picture')->preservingOriginal()->toMediaCollection('images/users');
+
 
         }
         $user =  User::with('media')->find($request->id);
