@@ -23,12 +23,20 @@ class User extends Authenticatable implements HasMedia
      * @var array<int, string>
      */
 
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+
     protected $fillable = [
-        'name',
+        'nombre',
+        'apellidos',
+        'telefono',
         'email',
         'password',
-        'surname1',
-        'surname2'
+        'latitud',
+        'longitud',
+        'fecha_nacimiento',
+        'rol',
+        'activo'
     ];
 
     /**
@@ -55,7 +63,7 @@ class User extends Authenticatable implements HasMedia
         $this->notify(new UserResetPasswordNotification($token));
     }
 
-    
+
 
 
     public function registerMediaCollections(): void
@@ -73,5 +81,21 @@ class User extends Authenticatable implements HasMedia
                 ->width(env('IMAGE_WIDTH', 300))
                 ->height(env('IMAGE_HEIGHT', 300));
         }
+    }
+
+    /**
+     * Obtener los eventos organizados por el usuario.
+     */
+    public function eventos()
+    {
+        return $this->hasMany(evento::class, 'id_organizador', 'id_usuario');
+    }
+
+    /**
+     * Obtener las reservas realizadas por el usuario.
+     */
+    public function reservas()
+    {
+        return $this->hasMany(reserva::class, 'id_usuario', 'id_usuario');
     }
 }

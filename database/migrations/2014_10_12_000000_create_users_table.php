@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -13,15 +12,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('surname1');
-            $table->string('surname2')->nullable();
-            $table->string('alias')->unique()->nullable();
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+        Schema::create('usuarios', function (Blueprint $table) {
+            $table->id('id_usuario'); // PK: Identificador Unico
+            $table->string('nombre'); // Nombre del usuario
+            $table->string('apellidos'); // Apellidos
+            $table->string('telefono')->nullable(); // Telefono
+            $table->string('email')->unique(); // Email (unico)
+            $table->string('password'); // Contraseña encriptada
+            $table->decimal('latitud', 10, 8)->nullable(); // Ubicación
+            $table->decimal('longitud', 11, 8)->nullable(); // Ubicación
+            $table->date('fecha_nacimiento')->nullable(); // Para validar edad
+            $table->enum('rol', ['usuario', 'organizador', 'administrador'])->default('usuario'); // Enum rol
+            $table->boolean('activo')->default(true); // Para bajas lógicas
             $table->rememberToken();
             $table->timestamps();
         });
@@ -34,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuarios');
     }
 };
