@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     });
 });
 
+route::apiResource('/posts', PostController::class);
 Route::apiResource('category-list', CategoryController::class);
 /*
 Route::get('category-list', [CategoryController::class, 'getList']);

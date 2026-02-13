@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePostRequest;
 
 class PostController extends Controller
 {
@@ -26,7 +27,7 @@ class PostController extends Controller
         
     }
     
-    public function store(Request $request){
+    public function store(StorePostRequest $request){
         $data = $request ->validated();
         $post = Post::create($data);
         return $post;
