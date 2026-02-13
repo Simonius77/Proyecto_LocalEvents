@@ -10,7 +10,7 @@ Crear servidor
 php artisan serve
 
 Arrancar servidor
-npm rendev
+npm run dev
 
 RAMA MIGRATIONS
 Migrations modificados para que coincidan con los modelos
