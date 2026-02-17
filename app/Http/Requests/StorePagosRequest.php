@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCategoryRequest extends FormRequest
+class StorePagosRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,10 @@ class StoreCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'nombre' => 'required'
+            'id_reserva' => 'required|integer|exists:reservas,id_reserva',
+            'monto' => 'required|numeric',
+            'fecha_pago' => 'required|date',
+            'estado' => 'required|string'
         ];
     }
 }
