@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Resources\CategoryResource;
-use App\Models\Category;
+use App\Http\Resources\CategoriaResource;
+use App\Models\Categoria;
  
 
-class CategoryController extends Controller
+class CategoriaController extends Controller
 {
     public function index()
     {
@@ -20,7 +20,7 @@ class CategoryController extends Controller
         if (!in_array($orderDirection, ['asc', 'desc'])) {
             $orderDirection = 'desc';
         }
-        $categories = Category::
+        $categories = Categoria::
             when(request('search_id'), function ($query) {
                 $query->where('id', request('search_id'));
             })
@@ -36,41 +36,41 @@ class CategoryController extends Controller
             })
             ->orderBy($orderColumn, $orderDirection)
             ->paginate(50);
-        return CategoryResource::collection($categories);
+        return CategoriaResource::collection($categories);
     }
 
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoriaRequest $request)
     {
-        $this->authorize('category-create');
-        $category = Category::create($request->validated());
+        $this->authorize('categoria-create');
+        $categoria = Categoria::create($request->validated());
 
-        return new CategoryResource($category);
+        return new CategoriaResource($categoria);
     }
 
-    public function show(Category $category)
+    public function show(Categoria $categoria)
     {
-        $this->authorize('category-edit');
-        return new CategoryResource($category);
+        $this->authorize('categoria-edit');
+        return new CategoryResource($categoria);
     }
 
-    public function update(Category $category, StoreCategoryRequest $request)
+    public function update(Category $categoria, StoreCategoryRequest $request)
     {
-        $this->authorize('category-edit');
-        $category->update($request->validated());
+        $this->authorize('categoria-edit');
+        $categoria->update($request->validated());
 
-        return new CategoryResource($category);
+        return new CategoriaResource($categoria);
     }
 
-    public function destroy(Category $category) {
-        $this->authorize('category-delete');
-        $category->delete();
+    public function destroy(Categoria $categoria) {
+        $this->authorize('categoria-delete');
+        $categoria->delete();
 
         return response()->noContent();
     }
 
     public function getList()
     {
-        return CategoryResource::collection(Category::all());
+        return CategoriaResource::collection(Categoria::all());
     }
     
     
