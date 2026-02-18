@@ -4,19 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-// Modelo Evento que representa la tabla eventos en la base de datos
-// Implementa HasMedia para permitir la gestion de imagenes con Spatie MediaLibrary
-class evento extends Model implements HasMedia
+class Evento extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     protected $table = 'eventos';
     protected $primaryKey = 'id_evento';
 
-    // Campos que se pueden llenar de forma masiva
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -32,17 +27,15 @@ class evento extends Model implements HasMedia
     ];
 
     /**
-     * Obtener la categoria del evento.
-     * Relacion muchos a uno con el modelo categoria.
+     * Obtener la categoría del evento.
      */
     public function categoria()
     {
-        return $this->belongsTo(categoria::class, 'id_categoria', 'id_categoria');
+        return $this->belongsTo(Category::class, 'id_categoria', 'id');
     }
 
     /**
-     * Obtener el organizador del evento (usuario).
-     * Relacion muchos a uno con el modelo User.
+     * Obtener el organizador del evento.
      */
     public function organizador()
     {
@@ -51,10 +44,10 @@ class evento extends Model implements HasMedia
 
     /**
      * Obtener las reservas del evento.
-     * Relacion uno a muchos con el modelo reserva.
      */
     public function reservas()
     {
-        return $this->hasMany(reserva::class, 'id_evento', 'id_evento');
+        return $this->hasMany(Reserva::class, 'id_evento', 'id_evento');
     }
 }
+
