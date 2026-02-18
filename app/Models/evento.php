@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class evento extends Model
+class Evento extends Model
 {
     use HasFactory;
 
@@ -31,11 +31,11 @@ class evento extends Model
      */
     public function categoria()
     {
-        return $this->belongsTo(categoria::class, 'id_categoria', 'id_categoria');
+        return $this->belongsTo(Category::class, 'id_categoria', 'id');
     }
 
     /**
-     * Obtener el organizador del evento (usuario).
+     * Obtener el organizador del evento.
      */
     public function organizador()
     {
@@ -47,6 +47,7 @@ class evento extends Model
      */
     public function reservas()
     {
-        return $this->hasMany(reserva::class, 'id_evento', 'id_evento');
+        return $this->hasMany(Reserva::class, 'id_evento', 'id_evento');
     }
 }
+
