@@ -40,7 +40,8 @@ export default function useUsers() {
         role_id: yup.array().min(1, 'Debe seleccionar al menos un rol').nullable()
     })
 
-
+//limita las peticiones al servidor para evitar colapsos y es de manera asincroan para que el programa siga 
+//funcionando mientras se espera la respuesta del servidor
     const withLoading = async (fn) => {
         if (isLoading.value) throw new Error('Operación en curso')
         isLoading.value = true
