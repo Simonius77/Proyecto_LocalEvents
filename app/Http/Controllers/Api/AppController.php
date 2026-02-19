@@ -11,6 +11,6 @@ use Illuminate\Support\Facades\DB;
 class AppController extends Controller
 {
 
-
+// exemle de text
      
 }
