@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePagosRequest;
+use App\Http\Requests\UpdatePagosRequest;
 use App\Http\Resources\PagosResource;
 use App\Models\pagos;
-use Illuminate\Http\Request;
 
 class PagosController extends Controller
 {
@@ -51,7 +51,7 @@ class PagosController extends Controller
         return new PagosResource($pago);
     }
 
-    public function update(pagos $pago, StorePagosRequest $request)
+    public function update(pagos $pago, UpdatePagosRequest $request)
     {
         // $this->authorize('pagos-edit');
         $pago->update($request->validated());

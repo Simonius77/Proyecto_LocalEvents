@@ -16,8 +16,8 @@ class CategoiaResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'   => $this->id,
-            'name' => $this->name//,
+            'id' => $this->id_categoria,
+            'name' => $this->nombre//,
 //            'created_at' => $this->created_at->toDateString()
         ];
     }

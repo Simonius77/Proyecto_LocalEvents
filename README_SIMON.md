@@ -12,6 +12,10 @@ php artisan serve
 Arrancar servidor
 npm run dev
 
+Crear base de datos
+php artisan migrate:fresh --seed
+Nota con el --seed se cargan los seeders creados por defecto
+
 RAMA MIGRATIONS
 Migrations modificados para que coincidan con los modelos
 users php artisan make:model user -c -m 

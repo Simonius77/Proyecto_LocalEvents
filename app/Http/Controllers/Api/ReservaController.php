@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservaRequest;
+use App\Http\Requests\UpdateReservaRequest;
 use App\Http\Resources\ReservaResource;
 use App\Models\reserva;
-use Illuminate\Http\Request;
 
 class ReservaController extends Controller
 {
@@ -51,7 +51,7 @@ class ReservaController extends Controller
         return new ReservaResource($reserva);
     }
 
-    public function update(reserva $reserva, StoreReservaRequest $request)
+    public function update(reserva $reserva, UpdateReservaRequest $request)
     {
         // $this->authorize('reserva-edit'); // Commented out until permissions are set up
         $reserva->update($request->validated());
