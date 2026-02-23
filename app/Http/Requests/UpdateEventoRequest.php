@@ -28,11 +28,14 @@ class UpdateEventoRequest extends FormRequest
             'longitud' => 'nullable|numeric',
             'precio' => 'sometimes|required|numeric|min:0',
             'aforo' => 'sometimes|required|integer|min:1',
-            'limite_edad' => 'nullable|integer|min:0',
+            // Corregido limite_edad para que acepte los valores del enum
+            'limite_edad' => 'nullable|string|in:+18,todas',
             'fecha_inicio' => 'sometimes|required|date',
             'fecha_fin' => 'sometimes|required|date|after_or_equal:fecha_inicio',
             'id_categoria' => 'sometimes|required|exists:categorias,id_categoria',
             'id_organizador' => 'sometimes|required|exists:usuarios,id_usuario',
+            // Nueva regla para la imagen del evento
+            'imagen' => 'nullable|image|max:2048',
         ];
     }
 }

@@ -28,11 +28,14 @@ class StoreEventoRequest extends FormRequest
             'longitud' => 'nullable|numeric',
             'precio' => 'required|numeric|min:0',
             'aforo' => 'required|integer|min:1',
-            'limite_edad' => 'nullable|integer|min:0',
+            'limite_edad' => 'nullable|string|in:+18,todas',
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
             'id_categoria' => 'required|exists:categorias,id_categoria',
-            'id_organizador' => 'required|exists:users,id_usuario',
+            // Se cambia users por usuarios para que coincida con la tabla real
+            'id_organizador' => 'required|exists:usuarios,id_usuario',
+            // Se añade regla para validar que el archivo sea una imagen
+            'imagen' => 'nullable|image|max:2048',
         ];
     }
 }
