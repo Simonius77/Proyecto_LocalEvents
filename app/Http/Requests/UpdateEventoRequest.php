@@ -32,7 +32,7 @@ class UpdateEventoRequest extends FormRequest
             'fecha_inicio' => 'sometimes|required|date',
             'fecha_fin' => 'sometimes|required|date|after_or_equal:fecha_inicio',
             'id_categoria' => 'sometimes|required|exists:categorias,id_categoria',
-            'id_organizador' => 'sometimes|required|exists:users,id_usuario',
+            'id_organizador' => 'sometimes|required|exists:usuarios,id_usuario',
         ];
     }
 }
