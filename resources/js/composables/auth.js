@@ -57,6 +57,11 @@ export default function useAuth() {
             // Peticion POST a la ruta de login de la API
             const response = await axios.post('/api/login', loginForm)
 
+            // Guardamos el token en el store
+            if (response.data.access_token) {
+                auth.setToken(response.data.access_token)
+            }
+
             // Si el login es correcto, obtenemos los datos del usuario
             await auth.getUser()
             await loginUser()

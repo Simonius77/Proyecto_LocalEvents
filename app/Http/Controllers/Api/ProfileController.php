@@ -64,6 +64,7 @@ class ProfileController extends Controller
 
     public function update(UpdateProfileRequest $request)
     {
+        /** @var \App\Models\User $profile */
         $profile = Auth::user();
         $profile->nombre = $request->nombre;
         $profile->save();

@@ -21,6 +21,24 @@ window.axios.defaults.headers.common['Accept'] = 'application/json';
 // Permite el envio de credenciales (cookies de sesion) en cada peticion.
 window.axios.defaults.withCredentials = true
 
+// Interceptor de peticion para añadir el token de autenticacion si existe.
+// Lo buscamos directamente en localStorage para evitar problemas de dependencia circular con Pinia.
+window.axios.interceptors.request.use(config => {
+    const authData = localStorage.getItem('authStore');
+    if (authData) {
+        try {
+            const parsed = JSON.parse(authData);
+            const token = parsed.token;
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        } catch (e) {
+            console.error('Error al recuperar token:', e);
+        }
+    }
+    return config;
+});
+
 // Interceptor de respuesta para manejar errores comunes de autenticacion.
 window.axios.interceptors.response.use(
     response => response,

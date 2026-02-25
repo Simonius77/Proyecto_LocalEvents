@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\PermissionController;
 
 use App\Http\Controllers\Api\ProfileController;
@@ -22,7 +22,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('users/updateimg', [UserController::class,'updateimg']);
 
 
-    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('categories', CategoriaController::class);
     Route::apiResource('roles', RoleController::class);
 
     Route::get('role-list', [RoleController::class, 'getList']);
@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 //El Route apiResource de Laravel es una función que genera automáticamente las rutas para un controlador de recursos, siguiendo las convenciones RESTful. Esto significa que crea rutas para las acciones comunes como index, show, store, update y destroy, lo que facilita la creación de APIs de manera rápida y eficiente. Por ejemplo, al usar Route::apiResource('users', UserController::class), se generarán rutas para listar usuarios, mostrar un usuario específico, crear un nuevo usuario, actualizar un usuario existente y eliminar un usuario.
 // En este caso, se están definiendo rutas para los recursos de usuarios, categorías, roles y permisos, así como rutas para el inicio de sesión, registro y cierre de sesión. Además, se incluye una ruta para obtener las habilidades del usuario autenticado.
 Route::apiResource('/posts', PostController::class);
-Route::apiResource('category-list', CategoryController::class);
+Route::apiResource('category-list', CategoriaController::class);
 Route::post('/login', [ProfileController::class, 'login']);
 //esta es la ruta de registro.
 Route::post('/register', [ProfileController::class, 'register']);

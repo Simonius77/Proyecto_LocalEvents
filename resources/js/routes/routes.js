@@ -16,7 +16,7 @@ async function requireLogin(to, from, next) {
 }
 
 const hasAdmin = (roles = []) =>
-    roles.some((role) => role?.name?.toLowerCase().includes('admin'));
+    roles.some((role) => (role?.nombre || role?.name || '').toLowerCase().includes('admin'));
 
 async function guest(to, from, next) {
     const auth = authStore()
