@@ -16,58 +16,58 @@ class CategoriesTableSeeder extends Seeder
     {
         
 
-        \DB::table('categories')->delete();
+        \DB::table('categorias')->delete();
         
-        \DB::table('categories')->insert(array (
+        \DB::table('categorias')->insert(array (
             0 => 
             array (
-                'id' => 1,
-                'name' => 'Tecnología',
+                'id_categoria' => 1,
+                'nombre' => 'Tecnología',
             ),
             1 => 
             array (
-                'id' => 2,
-                'name' => 'Programación',
+                'id_categoria' => 2,
+                'nombre' => 'Programación',
             ),
             2 => 
             array (
-                'id' => 3,
-                'name' => 'Diseño Web',
+                'id_categoria' => 3,
+                'nombre' => 'Diseño Web',
             ),
             3 => 
             array (
-                'id' => 4,
-                'name' => 'Tutoriales',
+                'id_categoria' => 4,
+                'nombre' => 'Tutoriales',
             ),
             4 => 
             array (
-                'id' => 5,
-                'name' => 'Noticias',
+                'id_categoria' => 5,
+                'nombre' => 'Noticias',
             ),
             5 => 
             array (
-                'id' => 6,
-                'name' => 'Opinión',
+                'id_categoria' => 6,
+                'nombre' => 'Opinión',
             ),
             6 => 
             array (
-                'id' => 7,
-                'name' => 'Recursos',
+                'id_categoria' => 7,
+                'nombre' => 'Recursos',
             ),
             7 => 
             array (
-                'id' => 8,
-                'name' => 'Laravel',
+                'id_categoria' => 8,
+                'nombre' => 'Laravel',
             ),
             8 => 
             array (
-                'id' => 9,
-                'name' => 'Vue.js',
+                'id_categoria' => 9,
+                'nombre' => 'Vue.js',
             ),
             9 => 
             array (
-                'id' => 10,
-                'name' => 'General',
+                'id_categoria' => 10,
+                'nombre' => 'General',
             ),
         ));
         

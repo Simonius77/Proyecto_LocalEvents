@@ -16,50 +16,32 @@ class UsersTableSeeder extends Seeder
     {
 
 
-        \DB::table('users')->delete();
+        \DB::table('usuarios')->delete();
 
-        \DB::table('users')->insert(array (
+        \DB::table('usuarios')->insert(array (
             0 =>
             array (
-                'id' => 1,
-                'name' => 'David',
-                'surname1' => 'Herrera',
-                'surname2' => NULL,
-                'alias' => 'dherrera',
+                'id_usuario' => 1,
+                'nombre' => 'Admin',
+                'apellidos' => 'Administrador',
                 'email' => 'admin@demo.com',
-                'email_verified_at' => NULL,
                 'password' => bcrypt('12345678'),
-                'remember_token' => NULL,
-                'created_at' => '2025-07-25 08:51:49',
-                'updated_at' => '2025-07-25 08:51:49',
+                'rol' => 'administrador',
+                'activo' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ),
             1 =>
             array (
-                'id' => 2,
-                'name' => 'User',
-                'surname1' => 'User',
-                'surname2' => NULL,
-                'alias' => 'user',
+                'id_usuario' => 2,
+                'nombre' => 'User',
+                'apellidos' => 'Usuario',
                 'email' => 'user@demo.com',
-                'email_verified_at' => NULL,
                 'password' => bcrypt('12345678'),
-                'remember_token' => NULL,
-                'created_at' => '2025-07-25 08:51:50',
-                'updated_at' => '2025-07-25 08:51:50',
-            ),
-            2 =>
-            array (
-                'id' => 3,
-                'name' => 'David',
-                'surname1' => 'Herrera',
-                'surname2' => 'Sánchez',
-                'alias' => 'dherrera1',
-                'email' => 'deivi7.hs@gmail.com',
-                'email_verified_at' => NULL,
-                'password' => bcrypt('12345678'),
-                'remember_token' => NULL,
-                'created_at' => '2025-07-25 08:51:50',
-                'updated_at' => '2025-07-25 08:51:50',
+                'rol' => 'usuario',
+                'activo' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ),
         ));
 
