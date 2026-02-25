@@ -1,3 +1,9 @@
+Atencion!!!
+OJO con las variables, yo programo en castellano antiguo.
+ http://127.0.0.1:5173/register
+
+
+
 Anotaciones para el desarrollador Simon
 requerimientos funcionales 
 relacion entre user y eventos y los roles

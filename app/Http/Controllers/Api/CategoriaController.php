@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Resources\CategoryResource;
+use App\Http\Requests\StoreCategoriaRequest;
+use App\Http\Resources\CategoriaResource;
 use App\Models\categoria;
 
 // Controlador para gestionar las categorias de eventos a traves de la API
-class CategoryController extends Controller
+class CategoriaController extends Controller
 {
     /**
      * Muestra una lista de categorias con soporte para busqueda y ordenacion.
@@ -50,13 +50,13 @@ class CategoryController extends Controller
             ->paginate(50);
 
         // Retorna los datos transformados por CategoryResource
-        return CategoryResource::collection($categories);
+        return CategoriaResource::collection($categories);
     }
 
     /**
      * Crea y almacena una nueva categoria en la base de datos.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoriaRequest $request)
     {
         // Verifica los permisos del usuario para crear una categoria
         $this->authorize('category-create');
@@ -65,7 +65,7 @@ class CategoryController extends Controller
         $category = categoria::create($request->validated());
 
         // Retorna la nueva categoria como un recurso
-        return new CategoryResource($category);
+        return new CategoriaResource($category);
     }
 
     /**
@@ -77,13 +77,13 @@ class CategoryController extends Controller
         $this->authorize('category-edit');
 
         // Retorna el recurso de la categoria solicitada
-        return new CategoryResource($category);
+        return new CategoriaResource($category);
     }
 
     /**
      * Actualiza los datos de una categoria existente.
      */
-    public function update(categoria $category, StoreCategoryRequest $request)
+    public function update(categoria $category, StoreCategoriaRequest $request)
     {
         // Verifica los permisos para editar la categoria
         $this->authorize('category-edit');
@@ -92,7 +92,7 @@ class CategoryController extends Controller
         $category->update($request->validated());
 
         // Retorna el recurso actualizado
-        return new CategoryResource($category);
+        return new CategoriaResource($category);
     }
 
     /**
@@ -116,6 +116,6 @@ class CategoryController extends Controller
     public function getList()
     {
         // Retorna todas las categorias para selectores o listas simples
-        return CategoryResource::collection(categoria::all());
+        return CategoriaResource::collection(categoria::all());
     }
 }

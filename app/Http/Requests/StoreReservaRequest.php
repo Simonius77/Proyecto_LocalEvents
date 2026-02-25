@@ -22,7 +22,7 @@ class StoreReservaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_usuario' => 'required|exists:users,id_usuario',
+            'id_usuario' => 'required|exists:usuarios,id_usuario',
             'id_evento' => 'required|exists:eventos,id_evento',
             'fecha_reserva' => 'required|date',
             'estado' => 'required|string|max:50',

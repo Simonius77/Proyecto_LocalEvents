@@ -1,4 +1,6 @@
 <?php
+//Atencion!!!
+//Ojo con las variables, yo programo en castellano antiguo by Simon.
 
 namespace App\Http\Resources;
 
@@ -15,11 +17,11 @@ class ReservaResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id_reserva,
-            'user_id' => $this->id_usuario,
-            'event_id' => $this->id_evento,
-            'reservation_date' => $this->fecha_reserva,
-            'status' => $this->estado,
+            'id_reserva' => $this->id_reserva,
+            'id_usuario' => $this->id_usuario,
+            'id_evento' => $this->id_evento,
+            'fecha_reserva' => $this->fecha_reserva,
+            'estado' => $this->estado,
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }

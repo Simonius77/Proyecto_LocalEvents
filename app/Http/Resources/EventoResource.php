@@ -1,4 +1,6 @@
 <?php
+//Atencion!!!
+//Ojo con las variables, yo programo en castellano antiguo by Simon.
 
 namespace App\Http\Resources;
 

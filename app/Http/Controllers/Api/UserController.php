@@ -71,7 +71,7 @@ class UserController extends Controller
      * Almacena un nuevo usuario en la base de datos.
      *
      * @param  StoreUserRequest  $request
-     * @return UserResource
+     * @return UserResource|\Illuminate\Http\JsonResponse
      */
 
     public function store(StoreUserRequest $request)
@@ -103,6 +103,8 @@ class UserController extends Controller
 
             return new UserResource($user);
         }
+
+        return response()->json(['message' => 'Error al guardar el usuario'], 500);
     }
 
     /**
@@ -123,7 +125,7 @@ class UserController extends Controller
      *
      * @param UpdateUserRequest $request
      * @param User $user
-     * @return UserResource
+     * @return UserResource|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateUserRequest $request, User $user)
     {
@@ -155,6 +157,8 @@ class UserController extends Controller
 
             return new UserResource($user);
         }
+
+        return response()->json(['message' => 'Error al actualizar el usuario'], 500);
     }
 
 
@@ -167,7 +171,7 @@ class UserController extends Controller
      */
     public function updateimg(Request $request)
     {
-        $user = User::find($request->id);
+        $user = User::find($request->id_usuario);
 
         // Si se recibe un archivo, elimina el anterior y agrega el nuevo
         if ($request->hasFile('picture')) {
@@ -178,7 +182,7 @@ class UserController extends Controller
         }
 
         // Recarga el usuario con su media y lo retorna
-        $user = User::with('media')->find($request->id);
+        $user = User::with('media')->find($request->id_usuario);
         return new UserResource($user);
     }
 

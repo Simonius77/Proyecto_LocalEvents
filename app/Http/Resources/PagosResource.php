@@ -15,11 +15,11 @@ class PagosResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id_pago,
-            'reservation_id' => $this->id_reserva,
-            'amount' => $this->monto,
-            'payment_date' => $this->fecha_pago,
-            'status' => $this->estado,
+            'id_pago' => $this->id_pago,
+            'id_reserva' => $this->id_reserva,
+            'monto' => $this->monto,
+            'fecha_pago' => $this->fecha_pago,
+            'estado' => $this->estado,
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }

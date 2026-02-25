@@ -22,7 +22,7 @@ class UpdateReservaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_usuario' => 'sometimes|required|exists:users,id_usuario',
+            'id_usuario' => 'sometimes|required|exists:usuarios,id_usuario',
             'id_evento' => 'sometimes|required|exists:eventos,id_evento',
             'fecha_reserva' => 'sometimes|required|date',
             'estado' => 'sometimes|required|string|max:50',

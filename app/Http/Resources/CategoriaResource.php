@@ -16,9 +16,8 @@ class CategoriaResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id_categoria,
-            'name' => $this->nombre//,
-//            'created_at' => $this->created_at->toDateString()
+            'id_categoria' => $this->id_categoria,
+            'nombre' => $this->nombre
         ];
     }
 }

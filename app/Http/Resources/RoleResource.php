@@ -1,4 +1,6 @@
 <?php
+//Atencion!!!
+//Ojo con las variables, yo programo en castellano antiguo by Simon.
 
 namespace App\Http\Resources;
 
@@ -15,9 +17,9 @@ class RoleResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'   => $this->id,
-            'name' => $this->name,
-            'guard_name' => $this->guard_name,
+            'id_rol' => $this->id,
+            'nombre' => $this->name,
+            'guardia' => $this->guard_name,
             'created_at' => $this->created_at?->toDateString()
         ];
     }
