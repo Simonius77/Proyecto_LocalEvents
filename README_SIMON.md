@@ -41,8 +41,3 @@ Models modificados para que coincidan con los migrations
  Los siguientes usuarios son creaados por defecto:
 - **Admin**: `admin@demo.com` / `12345678`
 - **Usuario**: `user@demo.com` / `12345678`
-
-
-
-
-
