@@ -52,6 +52,26 @@ async function requireAdmin(to, from, next) {
     }
 }
 
+// comprueba administradores u organizadores
+async function requireAdminOrOrganizer(to, from, next) {
+    const auth = authStore();
+    let isLogin = !!auth.authenticated && !!(auth.user?.name || auth.user?.nombre);
+    let user = auth.user;
+
+    if (isLogin) {
+        const roles = user.roles || [];
+        const ok = hasAdmin(roles) || roles.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador'));
+        if (ok) {
+            next();
+        } else {
+            next('/app');
+        }
+    } else {
+        if (auth.authenticated) auth.logout();
+        next('/login');
+    }
+}
+
 export default [
     {
         path: '/',
@@ -87,6 +107,11 @@ export default [
                 component: () => import('../views/auth/passwords/Reset.vue'),
                 beforeEnter: guest,
             },
+            {
+                path: 'evento/:id',
+                name: 'evento.show',
+                component: () => import('../views/public/evento/show.vue'),
+            },
         ]
     },
 
@@ -105,6 +130,13 @@ export default [
                     breadCrumb: 'Perfil',
                 },
             },
+            {
+                name: 'app.eventos',
+                path: 'eventos',
+                component: () => import('../views/admin/eventos/Index.vue'),
+                meta: { breadCrumb: 'Eventos' },
+                beforeEnter: requireAdminOrOrganizer
+            }
 
         ]
     },
@@ -143,6 +175,23 @@ export default [
                         component: () => import('../views/admin/categories/Index.vue'),
                         meta: {
                             breadCrumb: 'View category',
+                            hideBreadcrumb: true
+                        }
+                    },
+                ]
+            },
+
+            {
+                name: 'eventos',
+                path: 'eventos',
+                meta: { breadCrumb: 'Eventos' },
+                children: [
+                    {
+                        name: 'eventos.index',
+                        path: '',
+                        component: () => import('../views/admin/eventos/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Gestión de Eventos',
                             hideBreadcrumb: true
                         }
                     },

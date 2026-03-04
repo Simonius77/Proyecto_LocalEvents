@@ -25,6 +25,11 @@ const items = ref([
                 label: 'Perfil',
                 icon: 'pi pi-user',
                 route: '/app/profile'
+            },
+            {
+                label: 'Eventos',
+                icon: 'pi pi-calendar',
+                route: '/app/eventos'
             }
         ]
     }
