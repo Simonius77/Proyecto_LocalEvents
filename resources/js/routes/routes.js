@@ -150,6 +150,23 @@ export default [
             },
 
             {
+                name: 'eventos',
+                path: 'eventos',
+                meta: { breadCrumb: 'Eventos' },
+                children: [
+                    {
+                        name: 'eventos.index',
+                        path: '',
+                        component: () => import('../views/admin/eventos/Index.vue'),
+                        meta: {
+                            breadCrumb: 'View eventos',
+                            hideBreadcrumb: true
+                        }
+                    },
+                ]
+            },
+
+            {
                 name: 'permissions',
                 path: 'permissions',
                 meta: { breadCrumb: 'Permisos' },

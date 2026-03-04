@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 
 
     Route::apiResource('categories', CategoriaController::class);
+    Route::apiResource('eventos', \App\Http\Controllers\Api\EventoController::class)->except(['index', 'show']);
     Route::apiResource('roles', RoleController::class);
 
     Route::get('role-list', [RoleController::class, 'getList']);
@@ -52,10 +53,10 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 // En este caso, se están definiendo rutas para los recursos de usuarios, categorías, roles y permisos, así como rutas para el inicio de sesión, registro y cierre de sesión. Además, se incluye una ruta para obtener las habilidades del usuario autenticado.
 Route::apiResource('/posts', PostController::class);
 Route::apiResource('category-list', CategoriaController::class);
+Route::get('eventos-list', [\App\Http\Controllers\Api\EventoController::class, 'getList']);
+Route::apiResource('eventos', \App\Http\Controllers\Api\EventoController::class)->only(['index', 'show']);
 Route::post('/login', [ProfileController::class, 'login']);
-//esta es la ruta de registro.
 Route::post('/register', [ProfileController::class, 'register']);
-//este es el logout, no se si es necesario, pero lo dejo por si acaso
 Route::post('/logout', [ProfileController::class, 'logout']);
 /*
 Route::get('category-list', [CategoryController::class, 'getList']);
