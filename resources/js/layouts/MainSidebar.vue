@@ -129,7 +129,7 @@ const menuModel = computed(() => {
             label: 'Contenido',
             items: [
                 { label: 'Categorías', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' },
-                { label: 'Eventos', icon: 'pi pi-calendar', route: '/admin/eventos', permission: 'all' }
+                { label: 'Eventos', icon: 'pi pi-calendar', route: '/admin/eventos', permission: 'evento-list' }
             ]
         }
     ];

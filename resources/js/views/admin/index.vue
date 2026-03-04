@@ -65,6 +65,20 @@
                 <template #content>
                     <div class="stat-card-content">
                         <div class="stat-card-icon stat-icon-warning">
+                            <i class="pi pi-calendar"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <p class="stat-card-label">Eventos</p>
+                            <p class="stat-card-value">{{ stats.eventos || 0 }}</p>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+
+            <Card class="dashboard-stat-card">
+                <template #content>
+                    <div class="stat-card-content">
+                        <div class="stat-card-icon stat-icon-warning">
                             <i class="pi pi-shield"></i>
                         </div>
                         <div class="stat-card-info">
@@ -128,6 +142,20 @@
                         </router-link>
 
                         <router-link
+                            to="/admin/eventos"
+                            class="dashboard-action-item"
+                        >
+                            <div class="dashboard-action-icon stat-icon-warning">
+                                <i class="pi pi-calendar"></i>
+                            </div>
+                            <div class="dashboard-action-info">
+                                <p class="dashboard-action-title">Gestionar Eventos</p>
+                                <p class="dashboard-action-description">Ver y editar eventos</p>
+                            </div>
+                            <i class="pi pi-chevron-right dashboard-action-arrow"></i>
+                        </router-link>
+
+                        <router-link
                             to="/admin/roles"
                             class="dashboard-action-item"
                         >
@@ -166,18 +194,21 @@ import { ref, onMounted } from "vue";
 import useUsers from "../../composables/users";
 import usePosts from "../../composables/posts";
 import useCategories from "../../composables/categories";
+import useEventos from "../../composables/eventos";
 import useRoles from "../../composables/roles";
 
 const stats = ref({
     users: 0,
     posts: 0,
     categories: 0,
+    eventos: 0,
     roles: 0
 });
 
 const { users, getUsers } = useUsers();
 const { posts, getPosts } = usePosts();
 const { categories, getCategories } = useCategories();
+const { eventos, getEventos } = useEventos();
 const { roles, getRoles } = useRoles();
 
 const loadStats = async () => {
@@ -186,6 +217,7 @@ const loadStats = async () => {
             getUsers(),
             getPosts(),
             getCategories(),
+            getEventos(),
             getRoles()
         ]);
         
@@ -193,6 +225,7 @@ const loadStats = async () => {
             users: users.value?.total || users.value?.data?.length || 0,
             posts: posts.value?.total || posts.value?.data?.length || 0,
             categories: categories.value?.total || categories.value?.data?.length || 0,
+            eventos: eventos.value?.total || eventos.value?.data?.length || 0,
             roles: roles.value?.total || roles.value?.data?.length || 0
         };
     } catch (error) {
