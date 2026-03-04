@@ -1,4 +1,6 @@
 <?php
+//Atencion!!!
+//Ojo con las variables, yo programo en castellano antiguo by Simon.
 
 namespace App\Http;
 
@@ -7,9 +9,10 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * The application's global HTTP middleware stack.
+     * El "stack" global de middleware HTTP de la aplicacion.
      *
-     * These middleware are run during every request to your application.
+     * Estos middleware se ejecutan en cada peticion que recibe la aplicacion.
+     * Sirven para tareas basicas como manejar CORS, validar el tamaño del post o limpiar cadenas.
      *
      * @var array<int, class-string|string>
      */
@@ -24,7 +27,10 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware groups.
+     * Grupos de middleware para las rutas de la aplicacion.
+     *
+     * Permiten agrupar varios middleware bajo un solo nombre para aplicarlos facilmente.
+     * Por defecto tenemos el grupo 'web' (para el navegador) y el grupo 'api' (para peticiones externas).
      *
      * @var array<string, array<int, class-string|string>>
      */
@@ -39,7 +45,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Rakutentech\LaravelRequestDocs\LaravelRequestDocsMiddleware::class,
@@ -47,9 +53,10 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware.
+     * Alias de middleware de la aplicacion.
      *
-     * These middleware may be assigned to groups or used individually.
+     * Aqui se definen nombres cortos para middleware individuales que pueden
+     * ser usados en las rutas directamente (ejemplo: ->middleware('auth')).
      *
      * @var array<string, class-string|string>
      */

@@ -4,17 +4,16 @@ import { defineStore } from "pinia";
 
 export const authStore = defineStore("authStore", () => {
 
-    let user = ref({name:''});
+    let user = ref({ name: '', nombre: '', apellidos: '', roles: [] });
     let authenticated = ref(false);
+    let token = ref(null);
+
+    function setToken(newToken) {
+        token.value = newToken;
+    }
 
     async function login(data) {
-        axios.get('/api/user').then(response => {
-            user.value = response.data.data
-            authenticated.value = true
-        }).catch(error => {
-            user.value = {}
-            authenticated.value = false
-        })
+        // ...Existing code or update if needed
     }
     async function getUser(data) {
 
@@ -43,11 +42,12 @@ export const authStore = defineStore("authStore", () => {
     function logout() {
         user.value = {}
         authenticated.value = false
+        token.value = null
     }
 
     function is(roleName) {
-        return user.value.roles.some(role => role.name === roleName);
+        return user.value.roles.some(role => (role.nombre === roleName || role.name === roleName));
     }
 
-    return { user, authenticated, login, is, getUser,getUserSignIn, logout};
-}, {persist: true});
+    return { user, authenticated, token, setToken, login, is, getUser, getUserSignIn, logout };
+}, { persist: true });

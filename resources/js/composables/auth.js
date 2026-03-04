@@ -35,65 +35,121 @@ export default function useAuth() {
     })
 
     const registerForm = reactive({
-        name: '',
-        surname1: '',
-        surname2: '',
+        nombre: '',
+        apellidos: '',
         email: '',
         password: '',
         password_confirmation: ''
     })
 
+    // Funcion para procesar el inicio de sesion
     const submitLogin = async () => {
+        // Evita multiples clics si ya se esta procesando
         if (processing.value) return
 
         processing.value = true
         validationErrors.value = {}
 
-        await axios.post('/login', loginForm)
-            .then(async response => {
-                await auth.getUser()
-                //await store.dispatch('auth/getUser')
-                await loginUser()
+        try {
+            // IMPORTANTE: Pedimos el token CSRF antes de entrar
+            await axios.get('/sanctum/csrf-cookie')
+
+            // Peticion POST a la ruta de login de la API
+            const response = await axios.post('/api/login', loginForm)
+
+            // Guardamos el token en el store
+            if (response.data.access_token) {
+                auth.setToken(response.data.access_token)
+            }
+
+            // Si el login es correcto, obtenemos los datos del usuario
+            await auth.getUser()
+            await loginUser()
+
+            // Mostramos aviso de exito
+            swal({
+                icon: 'success',
+                title: '¡Sesion iniciada!',
+                text: 'Bienvenido de nuevo.',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            // Redirigimos al panel de administracion
+            await router.push({ name: 'admin.index' })
+        } catch (error) {
+            // Manejo de errores protegidos
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+
+                // Aviso visual del error
                 swal({
-                    icon: 'success',
-                    title: 'Login correcto',
-                    showConfirmButton: false,
-                    timer: 1500
+                    icon: 'error',
+                    title: 'Fallo al entrar',
+                    text: error.response.data.message || 'Verifica tu email y contraseña.',
                 })
-                await router.push({ name: 'admin.index' })
-            })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => processing.value = false)
+            } else {
+                // Error de red o servidor no disponible
+                swal({
+                    icon: 'error',
+                    title: 'Error de conexion',
+                    text: 'No se pudo conectar con el servidor. Revisa tu conexion.',
+                })
+            }
+        } finally {
+            // Pase lo que pase, quitamos el estado de carga
+            processing.value = false
+        }
     }
 
+    // Funcion para procesar el registro de un nuevo usuario
     const submitRegister = async () => {
+        // Evita multiples clics si ya se esta procesando
         if (processing.value) return
 
         processing.value = true
         validationErrors.value = {}
 
-        await axios.post('/register', registerForm)
-            .then(async response => {
-                // await store.dispatch('auth/getUser')
-                // await loginUser()
+        try {
+            // IMPORTANTE: Pedimos el token CSRF antes de registrar para que la peticion sea segura
+            await axios.get('/sanctum/csrf-cookie')
+
+            // Peticion POST a la API de registro
+            const response = await axios.post('/api/register', registerForm)
+
+            // Si el registro es exitoso, mostramos un mensaje de exito
+            swal({
+                icon: 'success',
+                title: '¡Registro completado!',
+                text: 'Ya puedes iniciar sesion con tu cuenta.',
+                showConfirmButton: false,
+                timer: 3000
+            })
+            // Redirigimos al usuario a la pantalla de login
+            await router.push({ name: 'auth.login' })
+        } catch (error) {
+            // Si hay un error, lo capturamos aqui
+            if (error.response?.data) {
+                // Errores de validacion
+                validationErrors.value = error.response.data.errors
+
+                // Mostramos un aviso visual del fallo
                 swal({
-                    icon: 'success',
-                    title: 'Registration successfully',
-                    showConfirmButton: false,
-                    timer: 1500
+                    icon: 'error',
+                    title: 'Error en el registro',
+                    text: error.response.data.message || 'Por favor, revisa los datos introducidos.',
                 })
-                await router.push({ name: 'auth.login' })
-            })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => processing.value = false)
+            } else {
+                // Error de conexion o servidor caido
+                swal({
+                    icon: 'error',
+                    title: 'Error de conexion',
+                    text: 'No se pudo conectar con el servidor para el registro.',
+                })
+            }
+        } finally {
+            // Aseguramos que el boton deje de estar en "cargando"
+            processing.value = false
+        }
     }
 
     const submitForgotPassword = async () => {
@@ -172,29 +228,29 @@ export default function useAuth() {
         }
     }
 
+    // Funcion para cerrar la sesion del usuario
     const logout = async () => {
         if (processing.value) return
 
         processing.value = true
 
-        axios.post('/logout')
+        // Peticion a la API para invalidar el token
+        axios.post('/api/logout')
             .then(response => {
+                // Limpiamos los datos locales del usuario
                 user.name = ''
                 user.email = ''
                 auth.logout()
-                //store.dispatch('auth/logout')
+
+                // Redirigimos al login
                 router.push({ name: 'auth.login' })
             })
             .catch(error => {
-                // swal({
-                //     icon: 'error',
-                //     title: error.response.status,
-                //     text: error.response.statusText
-                // })
+                // Opcional: mostrar error si falla el cierre de sesion
+                console.error('Error al cerrar sesion:', error)
             })
             .finally(() => {
                 processing.value = false
-                // Cookies.remove('loggedIn')
             })
     }
 

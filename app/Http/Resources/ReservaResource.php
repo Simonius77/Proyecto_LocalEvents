@@ -6,7 +6,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PermissionResource extends JsonResource
+class ReservaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,10 +17,12 @@ class PermissionResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id_permiso' => $this->id,
-            'nombre' => $this->name,
-            'guardia' => $this->guard_name,
-            'created_at' => $this->created_at?->toDateString()
+            'id_reserva' => $this->id_reserva,
+            'id_usuario' => $this->id_usuario,
+            'id_evento' => $this->id_evento,
+            'fecha_reserva' => $this->fecha_reserva,
+            'estado' => $this->estado,
+            'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }
 }

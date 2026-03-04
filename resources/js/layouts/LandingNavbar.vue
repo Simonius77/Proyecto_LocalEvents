@@ -5,7 +5,7 @@
         <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
             <!-- Logo -->
             <router-link to="/" class="flex items-center gap-2">
-                <img src="/images/logo.svg" alt="logo" class="h-10 w-auto"/>
+                <img src="images\Logo_vector.svg" alt="logo" class="h-25 w-auto"/>
             </router-link>
 
             <!-- Mobile Menu Button -->
@@ -39,12 +39,8 @@
                     </button>
 
                     <template v-if="!authStore().user?.name">
-                        <router-link to="/login">
-                            <Button label="Login" text size="small" />
-                        </router-link>
-                        <router-link to="/register">
-                            <Button label="Registro" severity="primary" size="small" />
-                        </router-link>
+                        <Button @click="() => { console.log('Login clicked'); router.push('/login'); }" label="Login" text size="small" />
+                        <Button @click="() => { console.log('Register clicked'); router.push('/register'); }" label="Registro" severity="primary" size="small" />
                     </template>
 
                     <div v-else>
@@ -105,12 +101,8 @@
                     <!-- Auth -->
                     <div class="flex flex-col gap-3">
                         <template v-if="!authStore().user?.name">
-                            <router-link to="/login" @click="visibleMobileMenu = false">
-                                <Button label="Iniciar Sesión" outlined class="w-full" />
-                            </router-link>
-                            <router-link to="/register" @click="visibleMobileMenu = false">
-                                <Button label="Registrarse" class="w-full" />
-                            </router-link>
+                            <Button @click="() => { router.push('/login'); visibleMobileMenu = false; }" label="Iniciar Sesión" outlined class="w-full" />
+                            <Button @click="() => { router.push('/register'); visibleMobileMenu = false; }" label="Registrarse" class="w-full" />
                         </template>
                         <template v-else>
                             <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">

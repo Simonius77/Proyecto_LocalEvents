@@ -1,12 +1,10 @@
 <?php
-//Atencion!!!
-//Ojo con las variables, yo programo en castellano antiguo by Simon.
 
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PermissionResource extends JsonResource
+class PagosResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,10 +15,12 @@ class PermissionResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id_permiso' => $this->id,
-            'nombre' => $this->name,
-            'guardia' => $this->guard_name,
-            'created_at' => $this->created_at?->toDateString()
+            'id_pago' => $this->id_pago,
+            'id_reserva' => $this->id_reserva,
+            'monto' => $this->monto,
+            'fecha_pago' => $this->fecha_pago,
+            'estado' => $this->estado,
+            'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }
 }

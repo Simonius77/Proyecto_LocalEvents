@@ -3,75 +3,105 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Evento;
+use App\Http\Requests\StoreEventoRequest;
+use App\Http\Requests\UpdateEventoRequest;
 use App\Http\Resources\EventoResource;
+use App\Models\evento;
 use Illuminate\Http\Request;
 
+// Controlador para gestionar los eventos a traves de la API
 class EventoController extends Controller
 {
+    /**
+     * Lista todos los eventos con filtros de busqueda y paginacion.
+     */
     public function index()
     {
-        $orderColumn = request('order_column', 'fecha_inicio');
-
-        if (!in_array($orderColumn, ['id_evento', 'nombre', 'fecha_inicio', 'precio'])) {
-            $orderColumn = 'fecha_inicio';
+        // Ordenacion por columna y direccion
+        $orderColumn = request('order_column', 'created_at');
+        if (!in_array($orderColumn, ['id_evento', 'nombre', 'fecha_inicio', 'created_at'])) {
+            $orderColumn = 'created_at';
         }
-
         $orderDirection = request('order_direction', 'desc');
-
         if (!in_array($orderDirection, ['asc', 'desc'])) {
             $orderDirection = 'desc';
         }
 
-        $eventos = Evento::with(['categoria', 'organizador'])
-            ->when(request('search_id'), function ($query) {
+        // Consulta con filtros para ID, Titulo o Busqueda Global
+        $eventos = evento::
+            when(request('search_id'), function ($query) {
                 $query->where('id_evento', request('search_id'));
             })
-            ->when(request('search_nombre'), function ($query) {
-                $query->where('nombre', 'like', '%' . request('search_nombre') . '%');
-            })
-            ->when(request('search_categoria'), function ($query) {
-                $query->where('id_categoria', request('search_categoria'));
+            ->when(request('search_title'), function ($query) {
+                $query->where('nombre', 'like', '%' . request('search_title') . '%');
             })
             ->when(request('search_global'), function ($query) {
                 $query->where(function ($q) {
                     $q->where('id_evento', request('search_global'))
-                      ->orWhere('nombre', 'like', '%' . request('search_global') . '%');
+                        ->orWhere('nombre', 'like', '%' . request('search_global') . '%');
                 });
             })
             ->orderBy($orderColumn, $orderDirection)
-            ->paginate(20);
+            ->paginate(50);
 
         return EventoResource::collection($eventos);
     }
 
-    public function store(Request $request)
+    /**
+     * Guarda un nuevo evento y procesa la imagen si se envia.
+     */
+    public function store(StoreEventoRequest $request)
     {
-        $evento = Evento::create($request->all());
+        // Crea el evento con los datos validados
+        $evento = evento::create($request->validated());
 
-        return new EventoResource($evento->load(['categoria', 'organizador']));
+        // Si el request contiene un archivo llamado 'imagen', se guarda en el storage
+        if ($request->hasFile('imagen')) {
+            $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
+        }
+
+        return new EventoResource($evento);
     }
 
-    public function show(Evento $evento)
+    /**
+     * Muestra la informacion de un evento especifico.
+     */
+    public function show(evento $evento)
     {
-        return new EventoResource(
-            $evento->load(['categoria', 'organizador', 'reservas'])
-        );
+        return new EventoResource($evento);
     }
 
-    public function update(Request $request, Evento $evento)
+    /**
+     * Actualiza un evento existente y su imagen.
+     */
+    public function update(evento $evento, UpdateEventoRequest $request)
     {
-        $evento->update($request->all());
+        // Actualiza los campos de texto
+        $evento->update($request->validated());
 
-        return new EventoResource(
-            $evento->load(['categoria', 'organizador'])
-        );
+        // Si se envia una nueva imagen, reemplaza la anterior
+        if ($request->hasFile('imagen')) {
+            $evento->media()->delete(); // Borra las imagenes previas
+            $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
+        }
+
+        return new EventoResource($evento);
     }
 
-    public function destroy(Evento $evento)
+    /**
+     * Elimina un evento de la base de datos.
+     */
+    public function destroy(evento $evento)
     {
         $evento->delete();
-
         return response()->noContent();
+    }
+
+    /**
+     * Obtiene una lista simple de todos los eventos.
+     */
+    public function getList()
+    {
+        return EventoResource::collection(evento::all());
     }
 }

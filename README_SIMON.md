@@ -1,3 +1,9 @@
+Atencion!!!
+OJO con las variables, yo programo en castellano antiguo.
+ http://127.0.0.1:5173/register
+
+
+
 Anotaciones para el desarrollador Simon
 requerimientos funcionales 
 relacion entre user y eventos y los roles
@@ -11,6 +17,10 @@ php artisan serve
 
 Arrancar servidor
 npm run dev
+
+Crear base de datos
+php artisan migrate:fresh --seed
+Nota con el --seed se cargan los seeders creados por defecto
 
 RAMA MIGRATIONS
 Migrations modificados para que coincidan con los modelos
@@ -27,6 +37,10 @@ Models modificados para que coincidan con los migrations
  evento modificado
  pagos modificado
  reservas modificado
+
+ Los siguientes usuarios son creaados por defecto:
+- **Admin**: `admin@demo.com` / `12345678`
+- **Usuario**: `user@demo.com` / `12345678`
 
 
 

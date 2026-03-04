@@ -15,74 +15,87 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 
 
+// Controlador para gestionar las operaciones de los usuarios a traves de la API
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra una lista paginada de usuarios con filtros de busqueda y ordenacion.
      *
      * @return AnonymousResourceCollection
      */
 
-     public function index()
+    public function index()
     {
-         $orderColumn = request('order_column', 'created_at');
-     
-         if (!in_array($orderColumn, ['id_usuario', 'nombre', 'created_at'])) {
-             $orderColumn = 'created_at';
-         }
-     
-         $orderDirection = request('order_direction', 'desc');
-     
-         if (!in_array($orderDirection, ['asc', 'desc'])) {
-             $orderDirection = 'desc';
-         }
-     
-         $users = User::
-             when(request('search_id'), function ($query) {
-                 $query->where('id_usuario', request('search_id'));
-             })
-             ->when(request('search_nombre'), function ($query) {
-                 $query->where('nombre', 'like', '%'.request('search_nombre').'%');
-             })
-             ->when(request('search_global'), function ($query) {
-                 $query->where(function($q) {
-                     $q->where('id_usuario', request('search_global'))
-                       ->orWhere('nombre', 'like', '%'.request('search_global').'%');
-                 });
-             })
-             ->orderBy($orderColumn, $orderDirection)
-             ->paginate(500);
-     
-         return UserResource::collection($users);
+        // Define la columna por la que se ordenara, por defecto 'created_at'
+        $orderColumn = request('order_column', 'created_at');
+
+        // Valida que la columna de ordenacion sea permitida
+        if (!in_array($orderColumn, ['id_usuario', 'nombre', 'created_at'])) {
+            $orderColumn = 'created_at';
+        }
+
+        // Define la direccion del orden (ascendente o descendente)
+        $orderDirection = request('order_direction', 'desc');
+
+        if (!in_array($orderDirection, ['asc', 'desc'])) {
+            $orderDirection = 'desc';
+        }
+
+        // Realiza la consulta con filtros condicionales (busqueda por ID, nombre o global)
+        $users = User::
+            when(request('search_id'), function ($query) {
+                $query->where('id_usuario', request('search_id'));
+            })
+            ->when(request('search_nombre'), function ($query) {
+                $query->where('nombre', 'like', '%' . request('search_nombre') . '%');
+            })
+            ->when(request('search_global'), function ($query) {
+                $query->where(function ($q) {
+                    $q->where('id_usuario', request('search_global'))
+                        ->orWhere('nombre', 'like', '%' . request('search_global') . '%');
+                });
+            })
+            ->orderBy($orderColumn, $orderDirection)
+            ->paginate(500);
+
+        // Retorna la coleccion de usuarios transformada por el recurso UserResource
+        return UserResource::collection($users);
     }
-     
+
 
     // userswithtasks removed
 
     // usersfromgroup removed
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo usuario en la base de datos.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return UserResource
+     * @param  StoreUserRequest  $request
+     * @return UserResource|\Illuminate\Http\JsonResponse
      */
+
     public function store(StoreUserRequest $request)
     {
+        // Obtiene los datos validados del request
+        $data = $request->validated();
+        // Busca el rol si se proporciona un ID de rol
         $role = Role::find($request->role_id);
 
+        // Crea una nueva instancia del modelo User y asigna los valores
         $user = new User();
-        $user->nombre = $request->nombre;
-        $user->apellidos = $request->apellidos;
-        $user->telefono = $request->telefono;
-        $user->email = $request->email;
-        $user->latitud = $request->latitud;
-        $user->longitud = $request->longitud;
-        $user->fecha_nacimiento = $request->fecha_nacimiento;
-        $user->rol = $request->rol;
-        $user->activo = $request->activo;
-        $user->password = Hash::make($request->password);
+        $user->nombre = $data['nombre'];
+        $user->apellidos = $data['apellidos'] ?? null;
+        $user->telefono = $data['telefono'] ?? null;
+        $user->email = $data['email'];
+        $user->latitud = $data['latitud'] ?? null;
+        $user->longitud = $data['longitud'] ?? null;
+        $user->fecha_nacimiento = $data['fecha_nacimiento'] ?? null;
+        $user->rol = $data['rol'] ?? 'usuario';
+        $user->activo = $data['activo'] ?? true;
+        // Encripta la contraseña antes de guardarla
+        $user->password = Hash::make($data['password']);
 
+        // Guarda el usuario y asigna el rol si existe
         if ($user->save()) {
             if ($role) {
                 $user->assignRole($role);
@@ -90,45 +103,53 @@ class UserController extends Controller
 
             return new UserResource($user);
         }
+
+        return response()->json(['message' => 'Error al guardar el usuario'], 500);
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los detalles de un usuario especifico.
      *
-     * @param  int  $id
+     * @param  User $user
      * @return UserResource
      */
     public function show(User $user)
     {
+        // Carga la relacion de roles y devuelve el recurso
         $user->load('roles');
         return new UserResource($user);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de un usuario existente.
      *
      * @param UpdateUserRequest $request
      * @param User $user
-     * @return UserResource
+     * @return UserResource|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        // Obtiene los datos validados
+        $data = $request->validated();
         $role = Role::find($request->role_id);
 
-        $user->nombre = $request->nombre;
-        $user->apellidos = $request->apellidos;
-        $user->telefono = $request->telefono;
-        $user->email = $request->email;
-        $user->latitud = $request->latitud;
-        $user->longitud = $request->longitud;
-        $user->fecha_nacimiento = $request->fecha_nacimiento;
-        $user->rol = $request->rol;
-        $user->activo = $request->activo;
+        // Actualiza los campos basicos del usuario
+        $user->nombre = $data['nombre'];
+        $user->apellidos = $data['apellidos'] ?? $user->apellidos;
+        $user->telefono = $data['telefono'] ?? $user->telefono;
+        $user->email = $data['email'];
+        $user->latitud = $data['latitud'] ?? $user->latitud;
+        $user->longitud = $data['longitud'] ?? $user->longitud;
+        $user->fecha_nacimiento = $data['fecha_nacimiento'] ?? $user->fecha_nacimiento;
+        $user->rol = $data['rol'] ?? $user->rol;
+        $user->activo = $data['activo'] ?? $user->activo;
 
-        if (!empty($request->password)) {
-            $user->password = Hash::make($request->password);
+        // Actualiza la contraseña solo si se proporciona una nueva
+        if (!empty($data['password'])) {
+            $user->password = Hash::make($data['password']);
         }
 
+        // Guarda los cambios y sincroniza el rol
         if ($user->save()) {
             if ($role) {
                 $user->syncRoles($role);
@@ -136,35 +157,48 @@ class UserController extends Controller
 
             return new UserResource($user);
         }
+
+        return response()->json(['message' => 'Error al actualizar el usuario'], 500);
     }
 
 
 
+    /**
+     * Actualiza la imagen de perfil del usuario utilizando MediaLibrary.
+     *
+     * @param Request $request
+     * @return UserResource
+     */
     public function updateimg(Request $request)
     {
-        $user = User::find($request->id);
-      
-        if($request->hasFile('picture')) {
+        $user = User::find($request->id_usuario);
+
+        // Si se recibe un archivo, elimina el anterior y agrega el nuevo
+        if ($request->hasFile('picture')) {
             $user->media()->delete();
-            $media = $user->addMediaFromRequest('picture')->preservingOriginal()->toMediaCollection('images/users');
+            $user->addMediaFromRequest('picture')->preservingOriginal()->toMediaCollection('images/users');
 
 
         }
-        $user =  User::with('media')->find($request->id);
+
+        // Recarga el usuario con su media y lo retorna
+        $user = User::with('media')->find($request->id_usuario);
         return new UserResource($user);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina el usuario especificado de la base de datos.
      *
-     * @param  int  $id
+     * @param  User $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
     {
+        // Verifica que el usuario tenga permiso para borrar
         $this->authorize('user-delete');
         $user->delete();
 
+        // Retorna una respuesta vacia con codigo 204
         return response()->noContent();
     }
 

@@ -1,9 +1,14 @@
 <?php
+//Atencion!!!
+//Ojo con las variables, yo programo en castellano antiguo by Simon.
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+//Esta migración crea la tabla 'usuarios' con campos para almacenar información de los usuarios, 
+//incluyendo nombre, apellidos, teléfono, email, contraseña, ubicación, fecha de nacimiento, rol y estado activo. 
+//También incluye timestamps para registrar la creación y actualización de los registros.
 return new class extends Migration {
     /**
      * Run the migrations.

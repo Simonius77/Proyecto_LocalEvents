@@ -1,64 +1,51 @@
 <template>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-2xl w-full">
-            <!-- Logo y título -->
+            <!-- Logo y titulo -->
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold">
                     {{ $t('register') }}
                 </h2>
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Regístrate para comenzar
+                    Registrate para comenzar
                 </p>
             </div>
 
-            <!-- Formulario -->
+            <!-- Formulario de Registro -->
             <Card>
                 <template #content>
                     <form @submit.prevent="submitRegister" class="space-y-6">
-                        <!-- Name -->
+                        <!-- Campo para el Nombre -->
                         <div class="flex flex-col gap-2">
-                            <label for="name" class="font-medium">{{ $t('name') }}</label>
+                            <label for="nombre" class="font-medium">{{ $t('name') }}</label>
                             <InputText
-                                id="name"
-                                v-model="registerForm.name"
-                                placeholder="Nombre completo"
-                                :invalid="!!validationErrors?.name"
+                                id="nombre"
+                                v-model="registerForm.nombre"
+                                placeholder="Tu nombre"
+                                :invalid="!!validationErrors?.nombre"
                             />
-                            <small v-if="validationErrors?.name" class="text-red-500">
-                                {{ validationErrors.name[0] }}
+                            <!-- Muestra error de validacion si el nombre falla -->
+                            <small v-if="validationErrors?.nombre" class="text-red-500">
+                                {{ validationErrors.nombre[0] }}
                             </small>
                         </div>
 
-                        <!-- Surname1 y Surname2 -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="flex flex-col gap-2">
-                                <label for="surname1" class="font-medium">{{ $t('surname1') }}</label>
-                                <InputText
-                                    id="surname1"
-                                    v-model="registerForm.surname1"
-                                    placeholder="Primer apellido"
-                                    :invalid="!!validationErrors?.surname1"
-                                />
-                                <small v-if="validationErrors?.surname1" class="text-red-500">
-                                    {{ validationErrors.surname1[0] }}
-                                </small>
-                            </div>
-
-                            <div class="flex flex-col gap-2">
-                                <label for="surname2" class="font-medium">{{ $t('surname2') }}</label>
-                                <InputText
-                                    id="surname2"
-                                    v-model="registerForm.surname2"
-                                    placeholder="Segundo apellido"
-                                    :invalid="!!validationErrors?.surname2"
-                                />
-                                <small v-if="validationErrors?.surname2" class="text-red-500">
-                                    {{ validationErrors.surname2[0] }}
-                                </small>
-                            </div>
+                        <!-- Campo para los Apellidos (Unificados segun la base de datos) -->
+                        <div class="flex flex-col gap-2">
+                            <label for="apellidos" class="font-medium">{{ $t('surname1') }}</label>
+                            <InputText
+                                id="apellidos"
+                                v-model="registerForm.apellidos"
+                                placeholder="Tus apellidos"
+                                :invalid="!!validationErrors?.apellidos"
+                            />
+                            <!-- Muestra error de validacion si los apellidos fallan -->
+                            <small v-if="validationErrors?.apellidos" class="text-red-500">
+                                {{ validationErrors.apellidos[0] }}
+                            </small>
                         </div>
 
-                        <!-- Email -->
+                        <!-- Campo para el Email -->
                         <div class="flex flex-col gap-2">
                             <label for="email" class="font-medium">{{ $t('email') }}</label>
                             <InputText
@@ -73,7 +60,7 @@
                             </small>
                         </div>
 
-                        <!-- Password y Confirm Password -->
+                        <!-- Campos de Contraseña y Sugerencia de Confirmacion -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="flex flex-col gap-2">
                                 <label for="password" class="font-medium">{{ $t('password') }}</label>
@@ -108,7 +95,7 @@
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
+                        <!-- Boton de Registro con estado de carga -->
                         <Button
                             type="submit"
                             :label="$t('register')"
@@ -118,7 +105,7 @@
                             size="large"
                         />
 
-                        <!-- Login link -->
+                        <!-- Enlace para usuarios que ya tienen cuenta -->
                         <div class="text-center">
                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                 ¿Ya tienes una cuenta?
@@ -126,7 +113,7 @@
                                     :to="{ name: 'auth.login' }"
                                     class="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                                 >
-                                    Inicia sesión aquí
+                                    Inicia sesion aqui
                                 </router-link>
                             </p>
                         </div>
@@ -138,7 +125,9 @@
 </template>
 
 <script setup>
+// Importamos la logica de autenticacion desde el composable
 import useAuth from '@/composables/auth';
 
+// Extraemos las variables y funciones necesarias para el formulario
 const { registerForm, validationErrors, processing, submitRegister } = useAuth();
 </script>
