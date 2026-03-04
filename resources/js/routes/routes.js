@@ -6,7 +6,7 @@ const GuestLayout = () => import('../layouts/GuestLayout.vue');
 
 async function requireLogin(to, from, next) {
     const auth = authStore();
-    const isLogin = !!auth.authenticated && !!auth.user?.name;
+    const isLogin = !!auth.authenticated && !!(auth.user?.name || auth.user?.nombre);
 
     if (isLogin) {
         next()
@@ -22,7 +22,7 @@ const hasAdmin = (roles = []) =>
 async function guest(to, from, next) {
     const auth = authStore()
     // Check if truly logged in (has both flag and user data)
-    let isLogin = !!auth.authenticated && !!auth.user?.name;
+    let isLogin = !!auth.authenticated && !!(auth.user?.name || auth.user?.nombre);
 
     if (isLogin) {
         next('/')
@@ -37,7 +37,7 @@ async function guest(to, from, next) {
 
 async function requireAdmin(to, from, next) {
     const auth = authStore();
-    let isLogin = !!auth.authenticated && !!auth.user?.name;
+    let isLogin = !!auth.authenticated && !!(auth.user?.name || auth.user?.nombre);
     let user = auth.user;
 
     if (isLogin) {
