@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 
 export const authStore = defineStore("authStore", () => {
 
-    let user = ref({ name: '' });
+    let user = ref({ name: '', nombre: '', apellidos: '', roles: [] });
     let authenticated = ref(false);
     let token = ref(null);
 
