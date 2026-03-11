@@ -43,6 +43,9 @@ Models modificados para que coincidan con los migrations
 - **Usuario**: `user@demo.com` / `12345678`
 - **Simon**: `simoncatalinafp@gmail.com` / `12345678`
 
+VISTAS
+MENU LATERAL PERFIL
+la vista del menu lateral de la vista perfil esta en layouts/MainSidebar.vue
 
 
 
