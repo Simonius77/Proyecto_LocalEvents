@@ -11,7 +11,30 @@ class UpdateEventoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        // Buscamos el evento en la ruta
+        $evento = $this->route('evento');
+        
+        // Si lo que llega es solo el ID (un numero), lo buscamos en la base de datos
+        if (is_numeric($evento)) {
+            $evento = \App\Models\evento::find($evento);
+        }
+
+        // Si no encontramos el evento, no dejamos pasar
+        if (!$evento) {
+            return false;
+        }
+
+        // Sacamos el usuario que esta usando la app
+        $user = $this->user();
+
+        // Si el usuario es administrador, le dejamos editar todo
+        if ($user->rol === 'admin') {
+            return true;
+        }
+        
+        // Si es un organizador normal, solo le dejamos editar si el es el dueño
+        // Comparamos los IDs de usuario y organizador
+        return $user->id_usuario === $evento->id_organizador;
     }
 
     /**
