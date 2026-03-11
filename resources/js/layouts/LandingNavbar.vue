@@ -109,8 +109,16 @@
                                 <div class="font-medium">{{ authStore().user.name }}</div>
                                 <div class="text-xs text-gray-500">{{ authStore().user.email }}</div>
                             </div>
+                            <Button 
+                                v-if="authStore().user?.roles?.some(r => r.name.includes('admin'))" 
+                                label="Panel Administracion" 
+                                icon="pi pi-cog" 
+                                outlined 
+                                @click="() => { visibleMobileMenu = false; router.push('/admin'); }" 
+                                class="mb-2"
+                            />
                             <Button label="Ir al Dashboard" icon="pi pi-th-large" outlined @click="navigateToDashboard" />
-                            <Button label="Cerrar Sesión" icon="pi pi-power-off" severity="danger" text @click="handleLogout" />
+                            <Button label="Cerrar Sesion" icon="pi pi-power-off" severity="danger" text @click="handleLogout" />
                         </template>
                     </div>
                     
@@ -163,7 +171,7 @@ const items = computed(() => [
             { 
                 label: 'Panel Admin', 
                 icon: 'pi pi-cog', 
-                route: '/admin', 
+                command: () => router.push('/admin'),
                 visible: authStore().user?.roles?.some(r => r.name.includes('admin')) || false
             },
             { label: 'Mi Panel', icon: 'pi pi-th-large', route: '/app' },

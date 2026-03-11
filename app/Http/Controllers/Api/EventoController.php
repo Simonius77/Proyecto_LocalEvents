@@ -93,6 +93,22 @@ class EventoController extends Controller
      */
     public function destroy(evento $evento)
     {
+        // Sacamos el ID del usuario que esta logueado
+        $currentUserId = \Illuminate\Support\Facades\Auth::id();
+        $userRole = \Illuminate\Support\Facades\Auth::user()->rol;
+
+        // Si es admin le dejamos borrar (opcional, pero suele ser util)
+        if ($userRole === 'admin') {
+            $evento->delete();
+            return response()->noContent();
+        }
+
+        // Si no es el dueño, no le dejamos borrar y mandamos un error 403
+        // Comparamos el ID del usuario con el id_organizador del evento
+        if ($currentUserId !== $evento->id_organizador) {
+            return response()->json(['message' => 'No puedes borrar un evento que no es tuyo'], 403);
+        }
+
         $evento->delete();
         return response()->noContent();
     }
