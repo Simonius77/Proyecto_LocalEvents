@@ -78,13 +78,18 @@ class UserController extends Controller
     {
         // Obtiene los datos validados del request
         $data = $request->validated();
-        // Busca el rol si se proporciona un ID de rol
-        $role = Role::find($request->role_id);
 
-        // Crea una nueva instancia del modelo User y asigna los valores
+        // Creamos el usuario mapeando los campos del frontend a la base de datos
         $user = new User();
-        $user->nombre = $data['nombre'];
-        $user->apellidos = $data['apellidos'] ?? null;
+        $user->nombre = $data['name'] ?? ($data['nombre'] ?? '');
+        
+        // Juntamos los apellidos si vienen por separado
+        if (isset($data['surname1'])) {
+            $user->apellidos = $data['surname1'] . (isset($data['surname2']) ? ' ' . $data['surname2'] : '');
+        } else {
+            $user->apellidos = $data['apellidos'] ?? null;
+        }
+
         $user->telefono = $data['telefono'] ?? null;
         $user->email = $data['email'];
         $user->latitud = $data['latitud'] ?? null;
@@ -92,13 +97,14 @@ class UserController extends Controller
         $user->fecha_nacimiento = $data['fecha_nacimiento'] ?? null;
         $user->rol = $data['rol'] ?? 'usuario';
         $user->activo = $data['activo'] ?? true;
-        // Encripta la contraseña antes de guardarla
+        // Encripta la contraseña
         $user->password = Hash::make($data['password']);
 
-        // Guarda el usuario y asigna el rol si existe
+        // Guarda el usuario y asignamos los roles si hay
         if ($user->save()) {
-            if ($role) {
-                $user->assignRole($role);
+            if (isset($data['role_id'])) {
+                // Usamos syncRoles para asignar el grupo de IDs
+                $user->syncRoles($data['role_id']);
             }
 
             return new UserResource($user);
@@ -131,13 +137,20 @@ class UserController extends Controller
     {
         // Obtiene los datos validados
         $data = $request->validated();
-        $role = Role::find($request->role_id);
+        
+        // Mapeamos los nombres de los campos de ingles (frontend) a español (base de datos)
+        // Si no vienen en ingles, usamos los que vengan en español
+        $user->nombre = $data['name'] ?? ($data['nombre'] ?? $user->nombre);
+        
+        // Juntamos los apellidos si vienen por separado desde el panel admin
+        if (isset($data['surname1'])) {
+            $user->apellidos = $data['surname1'] . (isset($data['surname2']) ? ' ' . $data['surname2'] : '');
+        } else {
+            $user->apellidos = $data['apellidos'] ?? $user->apellidos;
+        }
 
-        // Actualiza los campos basicos del usuario
-        $user->nombre = $data['nombre'];
-        $user->apellidos = $data['apellidos'] ?? $user->apellidos;
         $user->telefono = $data['telefono'] ?? $user->telefono;
-        $user->email = $data['email'];
+        $user->email = $data['email'] ?? $user->email;
         $user->latitud = $data['latitud'] ?? $user->latitud;
         $user->longitud = $data['longitud'] ?? $user->longitud;
         $user->fecha_nacimiento = $data['fecha_nacimiento'] ?? $user->fecha_nacimiento;
@@ -149,10 +162,12 @@ class UserController extends Controller
             $user->password = Hash::make($data['password']);
         }
 
-        // Guarda los cambios y sincroniza el rol
+        // Guarda los cambios
         if ($user->save()) {
-            if ($role) {
-                $user->syncRoles($role);
+            // Sincronizamos los roles si se han enviado IDs de roles
+            if (isset($data['role_id'])) {
+                // syncRoles acepta un array de IDs, perfecto para lo que envia el MultiSelect
+                $user->syncRoles($data['role_id']);
             }
 
             return new UserResource($user);

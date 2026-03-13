@@ -97,8 +97,8 @@
                         :options="roles"
                         size="small"
                         display="chip"
-                        optionLabel="name"
-                        optionValue="id"
+                        optionLabel="nombre"
+                        optionValue="id_rol"
                         filter
                         placeholder="Selecciona roles"
                         :invalid="!!errors.role_id"
