@@ -45,9 +45,19 @@ class EventoController extends Controller
         return EventoResource::collection($eventos);
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreEventoRequest $request)
     {
-        $evento = Evento::create($request->all());
+        // Agregamos el id_organizador a los datos validados usando el ID del usuario logueado
+        $validatedData = $request->validated();
+        $validatedData['id_organizador'] = \Illuminate\Support\Facades\Auth::id();
+
+        // Crea el evento con los datos validados
+        $evento = Evento::create($validatedData);
+
+        // Si el request contiene un archivo llamado 'imagen', se guarda en el storage
+        if ($request->hasFile('imagen')) {
+            $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
+        }
 
         return new EventoResource($evento->load(['categoria', 'organizador']));
     }
@@ -59,9 +69,15 @@ class EventoController extends Controller
         );
     }
 
-    public function update(Request $request, Evento $evento)
+    public function update(\App\Http\Requests\UpdateEventoRequest $request, Evento $evento)
     {
-        $evento->update($request->all());
+        $evento->update($request->validated());
+
+        // Si se envia una nueva imagen, reemplaza la anterior
+        if ($request->hasFile('imagen')) {
+            $evento->media()->delete(); // Borra las imagenes previas
+            $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
+        }
 
         return new EventoResource(
             $evento->load(['categoria', 'organizador'])

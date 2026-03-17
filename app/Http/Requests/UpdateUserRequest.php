@@ -28,27 +28,41 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // El nombre es obligatorio si se envia
-            'nombre' => ['required', 'string', 'max:255'],
-            // Los apellidos son opcionales
+            // El nombre es obligatorio si se envia (aceptamos 'nombre' o 'name')
+            'nombre' => ['required_without:name', 'nullable', 'string', 'max:255'],
+            'name' => ['required_without:nombre', 'nullable', 'string', 'max:255'],
+            
+            // Los apellidos son opcionales (aceptamos 'apellidos', 'surname1' o 'surname2')
             'apellidos' => ['nullable', 'string', 'max:255'],
+            'surname1' => ['nullable', 'string', 'max:255'],
+            'surname2' => ['nullable', 'string', 'max:255'],
+
             // El telefono es opcional con limite de caracteres
             'telefono' => ['nullable', 'string', 'max:20'],
+
             // El email es obligatorio, debe ser valido y unico, ignorando el ID del usuario actual
-            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $this->user->id_usuario . ',id_usuario',
+            // Usamos $this->user->id_usuario porque es el nombre del ID en tu tabla
+            'email' => 'required|string|email|max:255|unique:usuarios,email,' . ($this->user->id_usuario ?? $this->route('user')->id_usuario) . ',id_usuario',
+            
             // Coordenadas geograficas opcionales
             'latitud' => ['nullable', 'numeric'],
             'longitud' => ['nullable', 'numeric'],
+            
             // Fecha de nacimiento en formato fecha
             'fecha_nacimiento' => ['nullable', 'date'],
+            
             // El rol debe ser uno de los permitidos si se intenta cambiar
-            'rol' => ['sometimes', 'string', 'in:usuario,organizador,administrador'],
+            'rol' => ['sometimes', 'string', 'in:usuario,organizador,administrador,admin'],
+            
             // Estado de actividad del usuario
             'activo' => ['sometimes', 'boolean'],
+            
             // La contraseña es opcional al actualizar, minimo 8 caracteres si se proporciona
             'password' => ['nullable', 'string', 'min:8'],
-            // ID del rol de Spatie si se quiere asignar/sincronizar
-            'role_id' => ['nullable', 'exists:roles,id'],
+            
+            // IDs de los roles de Spatie (ahora permitimos que sea un array de IDs)
+            'role_id' => ['nullable', 'array'],
+            'role_id.*' => ['exists:roles,id'],
         ];
     }
 }

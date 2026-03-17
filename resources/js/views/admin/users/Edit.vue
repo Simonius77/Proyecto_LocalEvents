@@ -156,9 +156,9 @@
                             v-model="user.role_id" 
                             display="chip" 
                             :options="roles" 
-                            optionLabel="name" 
-                            optionValue="id"
-                            placeholder="Seleciona los roles" 
+                            optionLabel="nombre" 
+                            optionValue="id_rol"
+                            placeholder="Selecciona los roles" 
                             appendTo=".show-d"
                             class="w-100"
                             :class="{ 'p-invalid': hasError('role_id') }"
@@ -215,7 +215,7 @@ onMounted(async () => {
     
     // Mapeamos los roles del usuario a un array de IDs para que MultiSelect funcione correctamente
     if (userData.roles) {
-        user.value.role_id = userData.roles.map(r => r.id);
+        user.value.role_id = userData.roles.map(r => r.id_rol);
     }
 })
 

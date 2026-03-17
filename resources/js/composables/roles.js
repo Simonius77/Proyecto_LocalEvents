@@ -10,8 +10,8 @@ export default function useRoles() {
   const toast = useToast()
 
   const initialRole = { 
-    id: null, 
-    name: '' 
+    id_rol: null, 
+    nombre: '' 
   }
 
   const role = ref({ ...initialRole })
@@ -45,8 +45,8 @@ export default function useRoles() {
   const resetRole = () => { role.value = { ...initialRole }; clearErrors() }
   const setRole = (data = {}) => {
     role.value = { 
-      id: data.id ?? null, 
-      name: data.name ?? '' 
+      id_rol: data.id_rol ?? null, 
+      nombre: data.nombre ?? '' 
     }; 
     clearErrors() 
   }
@@ -65,8 +65,8 @@ export default function useRoles() {
   }
 
   const upsertRoleRecord = (roleRecord) => {
-    if (!roleRecord?.id) return
-    roles.value = [roleRecord, ...roles.value.filter(r => r.id !== roleRecord.id)]
+    if (!roleRecord?.id_rol) return
+    roles.value = [roleRecord, ...roles.value.filter(r => r.id_rol !== roleRecord.id_rol)]
   }
 
   const getRoles = (params = {}) => {

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RolesTableSeeder extends Seeder
 {
@@ -29,6 +30,12 @@ class RolesTableSeeder extends Seeder
             array (
                 'id' => 2,
                 'name' => 'user',
+                'guard_name' => 'web',
+            ),
+            2 => 
+            array (
+                'id' => 3,
+                'name' => 'organizador',
                 'guard_name' => 'web',
             ),
         ));

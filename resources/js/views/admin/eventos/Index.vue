@@ -15,7 +15,7 @@
                             @click="getEventos"
                         />
                         <Button
-                            v-if="can('all')"
+                            v-if="can('all') || can('course-create')"
                             label="Nuevo Evento"
                             icon="pi pi-plus"
                             size="small"
@@ -120,7 +120,7 @@
                             <Skeleton v-if="isLoading && !eventos.length" width="4rem" height="2rem" />
                             <div v-else class="flex gap-2">
                                 <Button
-                                    v-if="can('all')"
+                                    v-if="can('all') || isOwner(slotProps.data)"
                                     v-tooltip.top="'Editar'"
                                     icon="pi pi-pencil"
                                     rounded
@@ -130,7 +130,7 @@
                                     @click="openEditDialog(slotProps.data)"
                                 />
                                 <Button
-                                    v-if="can('all')"
+                                    v-if="can('all') || isOwner(slotProps.data)"
                                     v-tooltip.top="'Eliminar'"
                                     icon="pi pi-trash"
                                     rounded
@@ -216,11 +216,17 @@ import { ref, reactive, computed, onMounted, inject } from "vue";
 import useEventos from "@/composables/eventos";
 import useCategories from "@/composables/categories";
 import { useAbility } from '@casl/vue';
+import { authStore } from "@/store/auth";
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 
 const { eventos, evento, getEventos, createEvento, updateEvento, deleteEvento, resetEvento, setEvento, hasError, getError, upsertEventoRecord, isLoading } = useEventos();
 const { categoryList, getCategoryList } = useCategories();
 const { can } = useAbility();
+const auth = authStore();
+
+const isOwner = (eventoItem) => {
+    return auth.user?.id === eventoItem.id_organizador || auth.user?.id_usuario === eventoItem.id_organizador;
+};
 
 const swal = inject('$swal');
 

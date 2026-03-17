@@ -59,12 +59,31 @@
                             <span class="font-bold text-lg text-primary">{{ evento.precio > 0 ? evento.precio + '€' : 'Gratis' }}</span>
                             <!-- En el futuro se creara la vista de detalle del evento publico -->
                             <!-- <Button label="Ver Detalles" size="small" as="router-link" :to="'/eventos/' + evento.id" /> -->
-                            <Button label="Ver Detalles" size="small" outlined />
+                            <Button label="Ver Detalles" size="small" outlined @click="showDetalles(evento)" />
                         </div>
                     </template>
                 </Card>
             </div>
         </div>
+
+        <Dialog v-model:visible="displayDialog" modal :header="selectedEvento?.nombre" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" :dismissableMask="true">
+            <template v-if="selectedEvento">
+                <img v-if="selectedEvento.imagen" :src="selectedEvento.imagen" :alt="selectedEvento.nombre" class="w-full h-auto max-h-96 object-cover mb-4 rounded-md" />
+                <div class="flex items-center text-sm gap-2 mb-4 text-surface-600 dark:text-surface-400">
+                    <i class="pi pi-clock"></i>
+                    <span>{{ new Date(selectedEvento.fecha_inicio).toLocaleDateString() }}</span>
+                    <span v-if="selectedEvento.aforo" class="ml-2 bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 text-xs px-2 py-1 rounded-full">
+                        Aforo: {{ selectedEvento.aforo }}
+                    </span>
+                </div>
+                <div class="text-surface-700 dark:text-surface-300 leading-relaxed whitespace-pre-line mb-4">
+                    {{ selectedEvento.descripcion }}
+                </div>
+                <div class="mt-6 flex justify-end font-bold text-xl text-primary">
+                    {{ selectedEvento.precio > 0 ? selectedEvento.precio + '€' : 'Gratis' }}
+                </div>
+            </template>
+        </Dialog>
     </div>
 </template>
 
@@ -76,6 +95,14 @@ import axios from 'axios';
 const auth = authStore();
 const eventos = ref([]);
 const loading = ref(true);
+
+const displayDialog = ref(false);
+const selectedEvento = ref(null);
+
+const showDetalles = (evento) => {
+    selectedEvento.value = evento;
+    displayDialog.value = true;
+};
 
 const fetchEventos = async () => {
     try {

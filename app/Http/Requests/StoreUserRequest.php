@@ -22,13 +22,25 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => ['required', 'string', 'max:255'],
+            // El nombre es obligatorio (aceptamos 'nombre' o 'name')
+            'nombre' => ['required_without:name', 'nullable', 'string', 'max:255'],
+            'name' => ['required_without:nombre', 'nullable', 'string', 'max:255'],
+            
+            // Los apellidos son opcionales (aceptamos 'apellidos', 'surname1' o 'surname2')
             'apellidos' => ['nullable', 'string', 'max:255'],
+            'surname1' => ['nullable', 'string', 'max:255'],
+            'surname2' => ['nullable', 'string', 'max:255'],
+
             'telefono' => ['nullable', 'string', 'max:20'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios'],
             'password' => ['required', 'string', 'min:8'],
-            'rol' => ['sometimes', 'string', 'in:usuario,organizador,administrador'],
-            'role_id' => ['nullable', 'exists:roles,id'],
+            
+            // El rol interno de la tabla usuarios
+            'rol' => ['sometimes', 'string', 'in:usuario,organizador,administrador,admin'],
+            
+            // IDs de los roles de Spatie (permitimos array para el MultiSelect del admin)
+            'role_id' => ['nullable', 'array'],
+            'role_id.*' => ['exists:roles,id'],
         ];
     }
 }

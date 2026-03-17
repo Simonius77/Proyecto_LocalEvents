@@ -32,8 +32,8 @@ class StoreEventoRequest extends FormRequest
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
             'id_categoria' => 'required|exists:categorias,id_categoria',
-            // Se cambia users por usuarios para que coincida con la tabla real
-            'id_organizador' => 'required|exists:usuarios,id_usuario',
+            // Se quita la validacion requerida de id_organizador porque se asigna automaticamente en el controlador backend
+            // 'id_organizador' => 'required|exists:usuarios,id_usuario',
             // Se añade regla para validar que el archivo sea una imagen
             'imagen' => 'nullable|image|max:2048',
         ];
