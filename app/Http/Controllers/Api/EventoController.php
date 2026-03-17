@@ -52,8 +52,12 @@ class EventoController extends Controller
      */
     public function store(StoreEventoRequest $request)
     {
+        // Agregamos el id_organizador a los datos validados usando el ID del usuario logueado
+        $validatedData = $request->validated();
+        $validatedData['id_organizador'] = \Illuminate\Support\Facades\Auth::id();
+
         // Crea el evento con los datos validados
-        $evento = evento::create($request->validated());
+        $evento = evento::create($validatedData);
 
         // Si el request contiene un archivo llamado 'imagen', se guarda en el storage
         if ($request->hasFile('imagen')) {

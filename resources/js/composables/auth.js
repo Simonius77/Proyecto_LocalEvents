@@ -237,19 +237,21 @@ export default function useAuth() {
         // Peticion a la API para invalidar el token
         axios.post('/api/logout')
             .then(response => {
-                // Limpiamos los datos locales del usuario
+                // La sesion se cerro correctamente en el servidor
+            })
+            .catch(error => {
+                // Mostramos error en consola si falla la peticion
+                console.error('Error al cerrar sesion en el servidor:', error)
+            })
+            .finally(() => {
+                // Siempre limpiamos los datos locales del usuario
                 user.name = ''
                 user.email = ''
                 auth.logout()
 
-                // Redirigimos al login
+                // Redirigimos al usuario a la pantalla de login
                 router.push({ name: 'auth.login' })
-            })
-            .catch(error => {
-                // Opcional: mostrar error si falla el cierre de sesion
-                console.error('Error al cerrar sesion:', error)
-            })
-            .finally(() => {
+
                 processing.value = false
             })
     }

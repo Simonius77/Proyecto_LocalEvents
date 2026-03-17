@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/user', [ProfileController::class, 'user']);
     Route::get('/user/signin', [ProfileController::class, 'user']);
     Route::put('/user', [ProfileController::class, 'update']);
+    Route::post('/logout', [ProfileController::class, 'logout']);
    
     // Ruta para obtener las habilidades del usuario autenticado
     Route::get('abilities', function(Request $request) {
@@ -57,7 +58,6 @@ Route::get('eventos-list', [\App\Http\Controllers\Api\EventoController::class, '
 Route::apiResource('eventos', \App\Http\Controllers\Api\EventoController::class)->only(['index', 'show']);
 Route::post('/login', [ProfileController::class, 'login']);
 Route::post('/register', [ProfileController::class, 'register']);
-Route::post('/logout', [ProfileController::class, 'logout']);
 /*
 Route::get('category-list', [CategoryController::class, 'getList']);
 
