@@ -60,6 +60,13 @@
                             <!-- En el futuro se creara la vista de detalle del evento publico -->
                             <!-- <Button label="Ver Detalles" size="small" as="router-link" :to="'/eventos/' + evento.id" /> -->
                             <Button label="Ver Detalles" size="small" outlined @click="showDetalles(evento)" />
+                            <Button 
+                                :label="auth.authenticated ? 'Reservar' : 'Inicia sesión para reservar'" 
+                                :icon="auth.authenticated ? 'pi pi-calendar-plus' : 'pi pi-lock'"
+                                size="small" 
+                                :severity="auth.authenticated ? 'primary' : 'secondary'"
+                                @click="handleReserva(evento)" 
+                            />
                         </div>
                     </template>
                 </Card>
@@ -88,22 +95,41 @@
 </template>
 
 <script setup>
+// Yo importo lo que necesito para que funcione la pagina
 import { onMounted, ref } from 'vue';
 import { authStore } from "@/store/auth";
+import { useRouter } from 'vue-router';
 import axios from 'axios';
+import useReservas from '@/composables/reservas';
 
+const router = useRouter();
 const auth = authStore();
+const { crearReserva } = useReservas();
+
 const eventos = ref([]);
 const loading = ref(true);
 
 const displayDialog = ref(false);
 const selectedEvento = ref(null);
 
+// Yo guardo el evento elegido y abro la ventana de detalles
 const showDetalles = (evento) => {
     selectedEvento.value = evento;
     displayDialog.value = true;
 };
 
+// Yo manejo lo que pasa cuando alguien pulsa el boton de reservar
+const handleReserva = async (evento) => {
+    if (!auth.authenticated) {
+        // Si no ha entrado, lo mando al login
+        router.push('/login');
+        return;
+    }
+    // Si esta dentro, mando la peticion de reserva de una unidad
+    await crearReserva(evento.id_evento, 1);
+};
+
+// Yo pido la lista de eventos al servidor
 const fetchEventos = async () => {
     try {
         const response = await axios.get('/api/eventos-list');
@@ -115,6 +141,7 @@ const fetchEventos = async () => {
     }
 };
 
+// Nada mas empezar, yo busco los eventos para enseñarlos
 onMounted(() => {
     fetchEventos();
 });

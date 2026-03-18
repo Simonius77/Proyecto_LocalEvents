@@ -9,10 +9,10 @@
         <!-- Sidebar Header -->
         <div class="flex items-center justify-center p-4 border-b border-gray-100 dark:border-gray-800 shrink-0 transition-all duration-300"
              :class="props.isCollapsed ? 'h-16' : 'h-24'">
-            <div class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-all duration-300 w-full justify-center">
-                <img src="/images/logo.svg" alt="Logo" class="transition-all duration-300 object-contain" 
+            <router-link to="/" class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-all duration-300 w-full justify-center">
+                <img src="/images/logo.svg" alt="Logo" class="transition-all duration-300 object-contain cursor-pointer hov:opacity-80 transition-opacity" 
                      :class="props.isCollapsed ? 'h-8 w-8' : 'h-16 w-auto max-w-full'"/>
-            </div>
+            </router-link>
         </div>
 
         <!-- Sidebar Menu -->
@@ -101,24 +101,23 @@ const props = defineProps({
 
 const emit = defineEmits(['toggleSidebar', 'toggleCollapse']);
 
+// Yo decido que opciones aparecen en el menu de la izquierda segun los permisos
 const menuModel = computed(() => {
-    // Si se proporcionan items personalizados, usarlos
     if (props.menuItems) {
         return props.menuItems;
     }
 
-    // Si no, usar los items por defecto del admin
+    // Yo guardo aqui todas las opciones posibles del menu
     const items = [
         {
             icon: 'pi pi-home',
             label: 'Principal',
-            // Used as header if items present
              items: [
                 { label: 'Dashboard', icon: 'pi pi-compass', route: '/admin', permission: 'all' }
             ]
         },
         {
-            label: 'Gestión',
+            label: 'Gestion',
             items: [
                 { label: 'Usuarios', icon: 'pi pi-users', route: '/admin/users', permission: 'user-list' },
                 { label: 'Roles', icon: 'pi pi-shield', route: '/admin/roles', permission: 'role-list' },
@@ -128,13 +127,13 @@ const menuModel = computed(() => {
         {
             label: 'Contenido',
             items: [
-                { label: 'Categorías', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' },
+                { label: 'Categorias', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' },
                 { label: 'Eventos', icon: 'pi pi-calendar', route: '/admin/eventos', permission: 'all' }
             ]
         }
     ];
 
-    // Filtrar items según permisos
+    // Yo filtro la lista para enseñar solo lo que el usuario puede ver
     return items.filter(item => {
         if (item.permission && item.permission !== 'all') {
             if (!can(item.permission)) return false;

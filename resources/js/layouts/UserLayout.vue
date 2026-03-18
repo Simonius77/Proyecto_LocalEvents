@@ -7,8 +7,9 @@ import { computed } from 'vue';
 import MainLayout from './MainLayout.vue';
 import { authStore } from '../store/auth';
 
-// Define the sidebar menu items
+// Yo defino los elementos del menu lateral
 const items = computed(() => {
+    // Yo empiezo con la lista basica de opciones
     const list = [
         {
             label: 'Contenido',
@@ -17,6 +18,11 @@ const items = computed(() => {
                     label: 'Posts',
                     icon: 'pi pi-th-large',
                     route: '/app/posts'
+                },
+                {
+                    label: 'Mis Reservas',
+                    icon: 'pi pi-calendar',
+                    route: '/app/reservas'
                 },
             ]
         },
@@ -37,10 +43,10 @@ const items = computed(() => {
         }
     ];
 
-    // Get logged in user data
+    // Yo saco los datos del usuario que esta conectado
     const user = authStore().user;
 
-    // If the user is an administrator, add the Administration folder to the menu
+    // Si yo veo que el usuario es administrador, le añado el acceso al panel central
     if (user?.roles?.some(role => role.name.includes('admin'))) {
         list.push({
             label: 'Administracion',
