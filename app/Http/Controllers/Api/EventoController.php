@@ -27,8 +27,8 @@ class EventoController extends Controller
             ->when(request('search_id'), function ($query) {
                 $query->where('id_evento', request('search_id'));
             })
-            ->when(request('search_nombre'), function ($query) {
-                $query->where('nombre', 'like', '%' . request('search_nombre') . '%');
+            ->when(request('search_title'), function ($query) {
+                $query->where('nombre', 'like', '%' . request('search_title') . '%');
             })
             ->when(request('search_categoria'), function ($query) {
                 $query->where('id_categoria', request('search_categoria'));
@@ -105,5 +105,13 @@ class EventoController extends Controller
         $evento->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * Obtiene una lista simple de todos los eventos.
+     */
+    public function getList()
+    {
+        return EventoResource::collection(Evento::all());
     }
 }
