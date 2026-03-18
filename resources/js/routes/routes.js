@@ -73,10 +73,25 @@ export default [
                 beforeEnter: guest,
             },
             {
+                name: 'public.register',
                 path: 'register',
-                name: 'auth.register',
                 component: () => import('../views/auth/register/index.vue'),
                 beforeEnter: guest,
+            },
+            {
+                name: 'public.aviso-legal',
+                path: 'legal/aviso-legal',
+                component: () => import('../views/public/legal/AvisoLegal.vue'),
+            },
+            {
+                name: 'public.privacidad',
+                path: 'legal/privacidad',
+                component: () => import('../views/public/legal/Privacidad.vue'),
+            },
+            {
+                name: 'public.cookies',
+                path: 'legal/cookies',
+                component: () => import('../views/public/legal/Cookies.vue'),
             },
             {
                 path: 'forgot-password',
