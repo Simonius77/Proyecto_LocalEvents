@@ -3,6 +3,8 @@ import { authStore } from "../store/auth";
 const AuthenticatedLayout = () => import('../layouts/AdminLayout.vue');
 const AuthenticatedUserLayout = () => import('../layouts/UserLayout.vue');
 const GuestLayout = () => import('../layouts/GuestLayout.vue');
+const Home = () => import('../views/public/home/index.vue');
+const Login = () => import('../views/auth/login/Login.vue');
 
 async function requireLogin(to, from, next) {
     const auth = authStore();
