@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\UserResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,19 +12,17 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
+// Yo soy el modelo que representa a los usuarios del sistema
 class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-
+    // Yo indico que los datos se guardan en la tabla usuarios
     protected $table = 'usuarios';
+    // Yo marco id_usuario como la llave principal
     protected $primaryKey = 'id_usuario';
 
+    // Yo permito que estos campos se puedan rellenar de golpe
     protected $fillable = [
         'nombre',
         'apellidos',
@@ -39,33 +36,24 @@ class User extends Authenticatable implements HasMedia
         'activo'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+    // Yo escondo la contraseña y el token para que no se vean por ahi
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
+    // Yo me encargo de que la fecha de verificacion se maneje como tiempo real
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
+    // Yo mando el aviso por correo cuando alguien olvida su contraseña
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new UserResetPasswordNotification($token));
     }
 
-
-
-
+    // Yo preparo el sitio donde se guardan las fotos de los usuarios
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('images/users')
@@ -73,27 +61,23 @@ class User extends Authenticatable implements HasMedia
             ->useFallbackPath(public_path('/images/placeholder.jpg'));
     }
 
+    // Yo cambio el tamaño de las fotos si hace falta para que no pesen tanto
     public function registerMediaConversions(Media $media = null): void
     {
         if (env('RESIZE_IMAGE') === true) {
-
             $this->addMediaConversion('resized-image')
                 ->width(env('IMAGE_WIDTH', 300))
                 ->height(env('IMAGE_HEIGHT', 300));
         }
     }
 
-    /**
-     * Obtener los eventos organizados por el usuario.
-     */
+    // Yo conecto al usuario con los eventos que el mismo organiza
     public function eventos()
     {
         return $this->hasMany(evento::class, 'id_organizador', 'id_usuario');
     }
 
-    /**
-     * Obtener las reservas realizadas por el usuario.
-     */
+    // Yo conecto al usuario con todas las reservas que ha hecho
     public function reservas()
     {
         return $this->hasMany(reserva::class, 'id_usuario', 'id_usuario');

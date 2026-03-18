@@ -160,9 +160,17 @@ const isDesktop = ref(window.innerWidth >= 992);
 const { processing, logout } = useAuth();
 const { toggleDarkMode, isDarkTheme, setDefaultMode } = useLayout();
 
-const navLinks = [
-    { label: 'Inicio', route: '/', icon: 'pi pi-home' }
-];
+// Yo controlo los enlaces que se ven arriba en el menu
+const navLinks = computed(() => {
+    const links = [
+        { label: 'Inicio', route: '/', icon: 'pi pi-home' }
+    ];
+    // Si detecto que el usuario es administrador, yo le pongo el boton de administracion
+    if (authStore().user?.roles?.some(r => (r.name || r.nombre || '').toLowerCase().includes('admin'))) {
+        links.push({ label: 'Administracion', route: '/admin', icon: 'pi pi-cog' });
+    }
+    return links;
+});
 
 const items = computed(() => [
     {

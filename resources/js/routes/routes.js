@@ -52,21 +52,24 @@ async function requireAdmin(to, from, next) {
     }
 }
 
+// Yo guardo aqui todas las rutas de la aplicacion
 export default [
     {
+        // Esta es la ruta para la pagina de inicio que ve todo el mundo
         path: '/',
         component: GuestLayout,
         children: [
             {
-                path: '/',
-                name: 'home',
-                component: () => import('../views/public/home/index.vue'),
+                path: '',
+                name: 'public.home',
+                component: Home,
             },
 
             {
+                // Yo mando aqui a la gente para que entre con su cuenta
                 path: 'login',
-                name: 'auth.login',
-                component: () => import('../views/auth/login/Login.vue'),
+                name: 'public.login',
+                component: Login,
                 beforeEnter: guest,
             },
             {
@@ -103,6 +106,14 @@ export default [
                 component: () => import('../views/user/profile.vue'),
                 meta: {
                     breadCrumb: 'Perfil',
+                },
+            },
+            {
+                name: 'app.reservas',
+                path: 'reservas',
+                component: () => import('../views/user/reservas.vue'),
+                meta: {
+                    breadCrumb: 'Mis Reservas',
                 },
             },
 
