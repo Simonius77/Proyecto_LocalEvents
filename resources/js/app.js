@@ -131,6 +131,9 @@ app.directive('ripple', Ripple);
 // Esto asegura que el tema se aplique inmediatamente sin flash
 (function initDarkMode() {
     try {
+        // Limpiamos la sesion vieja de localStorage si existe
+        localStorage.removeItem('authStore');
+        
         // Pinia-plugin-persistedstate guarda con el nombre del store
         const savedTheme = localStorage.getItem('styleStore');
         if (savedTheme) {

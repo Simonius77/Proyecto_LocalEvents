@@ -20,8 +20,12 @@ class ReservaResource extends JsonResource
             'id_reserva' => $this->id_reserva,
             'id_usuario' => $this->id_usuario,
             'id_evento' => $this->id_evento,
-            'fecha_reserva' => $this->fecha_reserva,
+            'cantidad' => $this->cantidad,
+            'total' => $this->total,
             'estado' => $this->estado,
+            'fecha_reserva' => $this->fecha_reserva,
+            'evento' => new EventoResource($this->whenLoaded('evento')),
+            'usuario' => new UserResource($this->whenLoaded('usuario')),
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }

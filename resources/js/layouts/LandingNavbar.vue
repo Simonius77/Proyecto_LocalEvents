@@ -38,9 +38,9 @@
                         <i :class="isDarkTheme ? 'pi-moon' : 'pi-sun'" class="pi text-lg"></i>
                     </button>
 
-                    <template v-if="!authStore().user?.name">
-                        <Button @click="() => { console.log('Login clicked'); router.push('/login'); }" label="Login" text size="small" />
-                        <Button @click="() => { console.log('Register clicked'); router.push('/register'); }" label="Registro" severity="primary" size="small" />
+                    <template v-if="!auth.authenticated">
+                        <Button @click="() => { console.log('Login clicked'); router.push({ name: 'public.login' }); }" label="Login" text size="small" />
+                        <Button @click="() => { console.log('Register clicked'); router.push({ name: 'public.register' }); }" label="Registro" severity="primary" size="small" />
                     </template>
 
                     <div v-else>
@@ -48,8 +48,8 @@
                             type="button" 
                             @click="toggle"
                             class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                            <Avatar :image="authStore().user.avatar" :label="authStore().user.name[0]" shape="circle" size="small" />
-                            <span class="text-sm font-medium hidden xl:inline">{{ authStore().user?.name }}</span>
+                            <Avatar :image="auth.user.avatar" :label="auth.user.nombre ? auth.user.nombre[0] : 'U'" shape="circle" size="small" />
+                            <span class="text-sm font-medium hidden xl:inline">{{ auth.user?.nombre }}</span>
                             <i class="pi pi-chevron-down text-xs"></i>
                         </button>
                         <Menu ref="menu" :model="items" popup />
@@ -100,24 +100,39 @@
 
                     <!-- Auth -->
                     <div class="flex flex-col gap-3">
-                        <template v-if="!authStore().user?.name">
-                            <Button @click="() => { router.push('/login'); visibleMobileMenu = false; }" label="Iniciar Sesión" outlined class="w-full" />
-                            <Button @click="() => { router.push('/register'); visibleMobileMenu = false; }" label="Registrarse" class="w-full" />
+                        <template v-if="!auth.authenticated">
+                            <Button @click="() => { router.push({ name: 'public.login' }); visibleMobileMenu = false; }" label="Iniciar Sesión" outlined class="w-full" />
+                            <Button @click="() => { router.push({ name: 'public.register' }); visibleMobileMenu = false; }" label="Registrarse" class="w-full" />
                         </template>
                         <template v-else>
                             <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <div class="font-medium">{{ authStore().user.name }}</div>
-                                <div class="text-xs text-gray-500">{{ authStore().user.email }}</div>
+                                <div class="font-medium">{{ auth.user.nombre }}</div>
+                                <div class="text-xs text-gray-500">{{ auth.user.email }}</div>
                             </div>
                             <Button 
-                                v-if="authStore().user?.roles?.some(r => r.name.includes('admin'))" 
-                                label="Panel Administracion" 
+                                v-if="auth.authenticated && auth.user?.roles?.some(r => (r.nombre || r.name || '').toLowerCase().includes('admin'))" 
+                                label="Panel Administrador" 
                                 icon="pi pi-cog" 
                                 outlined 
                                 @click="() => { visibleMobileMenu = false; router.push('/admin'); }" 
                                 class="mb-2"
                             />
-                            <Button label="Ir al Dashboard" icon="pi pi-th-large" outlined @click="navigateToDashboard" />
+                            <Button 
+                                v-if="auth.authenticated && auth.user?.roles?.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador'))" 
+                                label="Panel Organizador" 
+                                icon="pi pi-calendar" 
+                                outlined 
+                                @click="() => { visibleMobileMenu = false; router.push('/organizador'); }" 
+                                class="mb-2"
+                            />
+                            <Button 
+                                v-if="auth.authenticated && auth.user?.roles?.every(r => !(r.nombre || r.name || '').toLowerCase().includes('admin') && !(r.nombre || r.name || '').toLowerCase().includes('organizador'))" 
+                                label="Panel Usuario" 
+                                icon="pi pi-user" 
+                                outlined 
+                                @click="() => { visibleMobileMenu = false; router.push('/app'); }" 
+                                class="mb-2"
+                            />
                             <Button label="Cerrar Sesion" icon="pi pi-power-off" severity="danger" text @click="handleLogout" />
                         </template>
                     </div>
@@ -152,6 +167,7 @@ import { ref, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const auth = authStore();
 const menu = ref();
 const visibleMobileMenu = ref(false);
 const isScrolled = ref(false);
@@ -160,14 +176,22 @@ const isDesktop = ref(window.innerWidth >= 992);
 const { processing, logout } = useAuth();
 const { toggleDarkMode, isDarkTheme, setDefaultMode } = useLayout();
 
-// Yo controlo los enlaces que se ven arriba en el menu
+// Yo controlo los enlaces que se ven arriba en el menú
 const navLinks = computed(() => {
     const links = [
         { label: 'Inicio', route: '/', icon: 'pi pi-home' }
     ];
-    // Si detecto que el usuario es administrador, yo le pongo el boton de administracion
-    if (authStore().user?.roles?.some(r => (r.name || r.nombre || '').toLowerCase().includes('admin'))) {
-        links.push({ label: 'Administracion', route: '/admin', icon: 'pi pi-cog' });
+    
+    // Si detecto que el usuario tiene un rol, le pongo su panel correspondiente
+    if (auth.authenticated && auth.user?.roles) {
+        if (auth.user.roles.some(r => (r.nombre || r.name || '').toLowerCase().includes('admin'))) {
+            links.push({ label: 'Panel Administrador', route: '/admin', icon: 'pi pi-cog' });
+        } else if (auth.user.roles.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador'))) {
+            links.push({ label: 'Panel Organizador', route: '/organizador', icon: 'pi pi-calendar' });
+        } else {
+            // Todos los usuarios autenticados que no son admin u organizador ven el panel de usuario
+            links.push({ label: 'Panel Usuario', route: '/app', icon: 'pi pi-user' });
+        }
     }
     return links;
 });
@@ -177,12 +201,23 @@ const items = computed(() => [
         items: [
             { label: 'Perfil', icon: 'pi pi-user', command: () => router.push('/app/profile') },
             { 
-                label: 'Panel Admin', 
+                label: 'Panel Administrador', 
                 icon: 'pi pi-cog', 
                 command: () => router.push('/admin'),
-                visible: authStore().user?.roles?.some(r => r.name.includes('admin')) || false
+                visible: auth.user?.roles?.some(r => (r.nombre || r.name || '').toLowerCase().includes('admin')) || false
             },
-            { label: 'Mi Panel', icon: 'pi pi-th-large', route: '/app' },
+            { 
+                label: 'Panel Organizador', 
+                icon: 'pi pi-calendar', 
+                command: () => router.push('/organizador'),
+                visible: auth.user?.roles?.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador')) || false
+            },
+            { 
+                label: 'Panel Usuario', 
+                icon: 'pi pi-user', 
+                command: () => router.push('/app'),
+                visible: auth.user?.roles?.every(r => !(r.nombre || r.name || '').toLowerCase().includes('admin') && !(r.nombre || r.name || '').toLowerCase().includes('organizador')) || false
+            },
             { separator: true },
             {
                 label: 'Cerrar sesión',

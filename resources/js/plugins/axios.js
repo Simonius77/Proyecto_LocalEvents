@@ -24,11 +24,13 @@ window.axios.defaults.withCredentials = true
 // Interceptor de peticion para añadir el token de autenticacion si existe.
 // Lo buscamos directamente en localStorage para evitar problemas de dependencia circular con Pinia.
 window.axios.interceptors.request.use(config => {
-    const authData = localStorage.getItem('authStore');
+    // Solo usamos sessionStorage para que la sesion expire al cerrar el navegador
+    const authData = sessionStorage.getItem('authStore');
     if (authData) {
         try {
             const parsed = JSON.parse(authData);
-            const token = parsed.token;
+            // Pinia-plugin-persistedstate v3/v4 can nest the state under 'state'
+            const token = parsed.token || (parsed.state && parsed.state.token);
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }

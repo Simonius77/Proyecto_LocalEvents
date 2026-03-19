@@ -6,7 +6,7 @@
         <div class="flex gap-4 mb-12" v-if="!authStore().authenticated">
             <template v-if="!authStore().user?.name">
                 <Button label="Iniciar Sesión" as="router-link" to="/login" size="large" />
-                <Button label="Registrarse" as="router-link" to="/register" severity="secondary" size="large" />
+                <Button label="Registrarse" as="router-link" :to="{ name: 'public.register' }" severity="secondary" size="large" />
             </template>
         </div>
         <div class="flex gap-4 mb-12" v-else>

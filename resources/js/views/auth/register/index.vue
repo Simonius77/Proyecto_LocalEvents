@@ -110,7 +110,7 @@
                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                 ¿Ya tienes una cuenta?
                                 <router-link
-                                    :to="{ name: 'auth.login' }"
+                                    :to="{ name: 'public.login' }"
                                     class="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                                 >
                                     Inicia sesion aqui

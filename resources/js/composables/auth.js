@@ -74,8 +74,8 @@ export default function useAuth() {
                 showConfirmButton: false,
                 timer: 1500
             })
-            // Redirigimos al panel de administracion
-            await router.push({ name: 'admin.index' })
+            // Redirigimos a la página de inicio
+            await router.push({ name: 'public.home' })
         } catch (error) {
             // Manejo de errores protegidos
             if (error.response?.data) {
@@ -125,7 +125,7 @@ export default function useAuth() {
                 timer: 3000
             })
             // Redirigimos al usuario a la pantalla de login
-            await router.push({ name: 'auth.login' })
+            await router.push({ name: 'public.login' })
         } catch (error) {
             // Si hay un error, lo capturamos aqui
             if (error.response?.data) {
@@ -190,7 +190,7 @@ export default function useAuth() {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                await router.push({ name: 'auth.login' })
+                await router.push({ name: 'public.login' })
             })
             .catch(error => {
                 if (error.response?.data) {
@@ -201,10 +201,8 @@ export default function useAuth() {
     }
 
     const loginUser = () => {
-        //const auth = authStore(); //TODO test
-        console.log('GettingUserSignIn: loginUser')
-        user = auth.user
-        // Cookies.set('loggedIn', true)
+        console.log('Regenerando reactividad de usuario')
+        Object.assign(user, auth.user)
         getAbilities()
     }
 
@@ -245,12 +243,11 @@ export default function useAuth() {
             })
             .finally(() => {
                 // Siempre limpiamos los datos locales del usuario
-                user.name = ''
-                user.email = ''
+                Object.assign(user, { name: '', email: '', nombre: '', apellidos: '', roles: [] })
                 auth.logout()
 
                 // Redirigimos al usuario a la pantalla de login
-                router.push({ name: 'auth.login' })
+                router.push({ name: 'public.login' })
 
                 processing.value = false
             })

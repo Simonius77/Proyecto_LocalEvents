@@ -54,8 +54,42 @@ async function requireAdmin(to, from, next) {
     }
 }
 
+async function requireOrganizador(to, from, next) {
+    const auth = authStore();
+    let isLogin = !!auth.authenticated && !!(auth.user?.name || auth.user?.nombre);
+    let user = auth.user;
+
+    if (isLogin) {
+        if (user.roles.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador') || (r.nombre || r.name || '').toLowerCase().includes('admin'))) {
+            next()
+        } else {
+            next('/app')
+        }
+    } else {
+        if (auth.authenticated) auth.logout();
+        next('/login')
+    }
+}
+
 // Yo guardo aqui todas las rutas de la aplicacion
 export default [
+    {
+        path: '/organizador',
+        component: AuthenticatedLayout,
+        beforeEnter: requireOrganizador,
+        meta: { breadCrumb: 'Organizador' },
+        children: [
+            {
+                name: 'organizador.index',
+                path: '',
+                component: () => import('../views/organizador/Index.vue'),
+                meta: {
+                    breadCrumb: 'Panel Organizador',
+                    hideBreadcrumb: true
+                }
+            }
+        ]
+    },
     {
         // Esta es la ruta para la pagina de inicio que ve todo el mundo
         path: '/',
