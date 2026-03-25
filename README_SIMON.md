@@ -2,6 +2,9 @@ Atencion!!!
 OJO con las variables, yo programo en castellano antiguo.
  http://127.0.0.1:5173/register
 
+ NOTA!!
+ OJO con la instalacion de Pinia, te desconfigura el proyecto, no lo instales. no instalar con el proyecto en marcha. rompe el proyecto por problemas de dependencias. Si te pasan cosas raras revisa las dependencias en el archivo package.json y package-lock.json. y borra la carpeta node_modules y vuelve a instalar las dependencias con npm install.
+
 
 
 Anotaciones para el desarrollador Simon
@@ -37,6 +40,12 @@ Models modificados para que coincidan con los migrations
  evento modificado
  pagos modificado
  reservas modificado
+
+ RAMA SIMON
+
+ Mi rama de trabajo personal 
+
+
 
  Los siguientes usuarios son creaados por defecto:
 - **Admin**: `admin@demo.com` / `12345678`

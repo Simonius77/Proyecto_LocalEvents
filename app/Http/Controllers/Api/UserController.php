@@ -42,8 +42,8 @@ class UserController extends Controller
         }
 
         // Realiza la consulta con filtros condicionales (busqueda por ID, nombre o global)
-        $users = User::
-            when(request('search_id'), function ($query) {
+        $users = User::with('roles')
+            ->when(request('search_id'), function ($query) {
                 $query->where('id_usuario', request('search_id'));
             })
             ->when(request('search_nombre'), function ($query) {
