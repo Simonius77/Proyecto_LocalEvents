@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-// Yo defino este modelo como la representacion de una reserva en la base de datos
+// Defino este modelo como la representacion de una reserva en la base de datos
 class Reserva extends Model
 {
     // Indico que la tabla se llama reservas

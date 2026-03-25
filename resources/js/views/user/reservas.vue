@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-// Yo traigo las herramientas para manejar las reservas
+// Traigo las herramientas para manejar las reservas
 import { onMounted } from 'vue';
 import useReservas from '@/composables/reservas';
 import { useConfirm } from "primevue/useconfirm";
@@ -131,7 +131,7 @@ import { useConfirm } from "primevue/useconfirm";
 const confirm = useConfirm();
 const { reservas, isLoading, getReservas, pagarReserva, solicitarCancelacion, eliminarReserva } = useReservas();
 
-// Yo decido el color del aviso segun como este la reserva
+// Decido el color del aviso segun como este la reserva
 const getStatusSeverity = (status) => {
     switch (status) {
         case 'pagado':
@@ -147,7 +147,7 @@ const formatStatus = (status) => {
     return status.replace(/_/g, ' ');
 };
 
-// Yo cambio el formato de la fecha para que se lea bien
+// Cambio el formato de la fecha para que se lea bien
 const formatDate = (date) => {
     if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('es-ES', {

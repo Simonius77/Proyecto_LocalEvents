@@ -38,9 +38,30 @@ export default function useAuth() {
         nombre: '',
         apellidos: '',
         email: '',
-        password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        // Se inician las coordenadas vacias
+        latitud: null,
+        longitud: null
     })
+
+    // Funcion para pedir la ubicacion al arrancar
+    const getLocation = () => {
+        if (!navigator.geolocation) {
+            console.warn('Geolocalizacion no soportada por el navegador')
+            return
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                registerForm.latitud = position.coords.latitude
+                registerForm.longitud = position.coords.longitude
+                console.log('Ubicacion obtenida:', registerForm.latitud, registerForm.longitud)
+            },
+            (error) => {
+                console.error('Error al obtener la ubicacion:', error.message)
+            }
+        )
+    }
 
     // Funcion para procesar el inicio de sesion
     const submitLogin = async () => {
@@ -278,6 +299,7 @@ export default function useAuth() {
         getUser,
         getUserSignIn,
         logout,
-        getAbilities
+        getAbilities,
+        getLocation
     }
 }

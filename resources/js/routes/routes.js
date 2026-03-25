@@ -71,7 +71,7 @@ async function requireOrganizador(to, from, next) {
     }
 }
 
-// Yo guardo aqui todas las rutas de la aplicacion
+// Guardo aqui todas las rutas de la aplicacion
 export default [
     {
         path: '/organizador',
@@ -102,7 +102,7 @@ export default [
             },
 
             {
-                // Yo mando aqui a la gente para que entre con su cuenta
+                // Mando aqui a la gente para que entre con su cuenta
                 path: 'login',
                 name: 'public.login',
                 component: Login,

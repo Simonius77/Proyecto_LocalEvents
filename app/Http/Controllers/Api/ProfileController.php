@@ -23,6 +23,10 @@ class ProfileController extends Controller
             'password' => Hash::make($request->password),
             'rol' => 'usuario', // Default role
             'activo' => true,
+            // Guarda la latitud del usuario si da permiso
+            'latitud' => $request->latitud,
+            // Guarda la longitud del usuario si da permiso
+            'longitud' => $request->longitud,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

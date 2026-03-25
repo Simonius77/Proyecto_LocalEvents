@@ -101,13 +101,13 @@ const props = defineProps({
 
 const emit = defineEmits(['toggleSidebar', 'toggleCollapse']);
 
-// Yo decido que opciones aparecen en el menu de la izquierda segun los permisos
+// Decido que opciones aparecen en el menu de la izquierda segun los permisos
 const menuModel = computed(() => {
     if (props.menuItems) {
         return props.menuItems;
     }
 
-    // Yo guardo aqui todas las opciones posibles del menu
+    // Guardo aqui todas las opciones posibles del menu
     const items = [
         {
             icon: 'pi pi-home',
@@ -133,7 +133,7 @@ const menuModel = computed(() => {
         }
     ];
 
-    // Yo filtro la lista para enseñar solo lo que el usuario puede ver
+    // Filtro la lista para enseñar solo lo que el usuario puede ver
     return items.filter(item => {
         if (item.permission && item.permission !== 'all') {
             if (!can(item.permission)) return false;

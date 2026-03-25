@@ -12,5 +12,5 @@
 </template>
 
 <script setup>
-// Yo muestro este texto para avisar que no tenemos responsabilidad legal
+// Muestro este texto para avisar que no tenemos responsabilidad legal
 </script>

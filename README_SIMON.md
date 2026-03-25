@@ -88,6 +88,13 @@ Organización: Cada vez que subes una imagen para un evento o un usuario, la lib
 Evitar conflictos: Al poner cada imagen en su propia carpeta numerada, se evita que dos archivos con el mismo nombre se borren el uno al otro.
 Control del sistema: Esas imágenes (como eventomuestra.webp) son las que el sistema utiliza para mostrar las fotos de los eventos que ya están creados en tu base de datos.
 
+GEOLOCALIZACION
+
+Para implementar la geolocalizacion de los usuarios he creado la rama de geolocalizacion.
+
+Los usuarios al registrarse se les pedira permiso para acceder a su ubicacion y se guardara en la base de datos.
+
+
 
 
 

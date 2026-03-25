@@ -12,5 +12,5 @@
 </template>
 
 <script setup>
-// Yo explico como trato los datos en este texto generico
+// Explico como trato los datos en este texto generico
 </script>

@@ -28,6 +28,9 @@ class RegisterRequest extends FormRequest
             'apellidos' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // Se permite que las coordenadas esten vacias, pero si hay datos deben ser numeros
+            'latitud' => ['nullable', 'numeric'],
+            'longitud' => ['nullable', 'numeric'],
         ];
     }
 }

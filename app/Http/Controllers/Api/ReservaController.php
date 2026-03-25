@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ReservaResource;
 
-// Yo manejo todas las peticiones que tienen que ver con las reservas de eventos
+// Manejo todas las peticiones que tienen que ver con las reservas de eventos
 class ReservaController extends Controller
 {
     // Aqui listo las reservas. Si soy admin veo todas, si no solo las micas
@@ -30,7 +30,7 @@ class ReservaController extends Controller
         );
     }
 
-    // Yo guardo una nueva reserva en la base de datos con los datos que me mandan
+    // Guardo una nueva reserva en la base de datos con los datos que me mandan
     public function store(Request $request)
     {
         $request->validate([
@@ -52,7 +52,7 @@ class ReservaController extends Controller
         return new ReservaResource($reserva->load('evento'));
     }
 
-    // Yo marco una reserva como pagada cuando el usuario pulsa el boton
+    // Marco una reserva como pagada cuando el usuario pulsa el boton
     public function pagar($id)
     {
         $reserva = Reserva::where('id_usuario', Auth::id())->findOrFail($id);
@@ -77,7 +77,7 @@ class ReservaController extends Controller
         return response()->json(['data' => $reserva]);
     }
 
-    // Yo borro la reserva si el que lo pide es el dueno o el admin
+    // Borro la reserva si el que lo pide es el dueno o el admin
     public function destroy($id)
     {
         $user = Auth::user();

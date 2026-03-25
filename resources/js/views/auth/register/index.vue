@@ -95,6 +95,12 @@
                             </div>
                         </div>
 
+                        <!-- Aviso para explicar por que se pide la ubicacion -->
+                        <div class="flex items-center gap-2 text-xs text-gray-500 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <i class="pi pi-info-circle text-blue-500"></i>
+                            <p>Utilizamos tu ubicacion para recomendarte los eventos mas cercanos a ti.</p>
+                        </div>
+
                         <!-- Boton de Registro con estado de carga -->
                         <Button
                             type="submit"
@@ -125,9 +131,15 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 // Importamos la logica de autenticacion desde el composable
 import useAuth from '@/composables/auth';
 
 // Extraemos las variables y funciones necesarias para el formulario
-const { registerForm, validationErrors, processing, submitRegister } = useAuth();
+const { registerForm, validationErrors, processing, submitRegister, getLocation } = useAuth();
+
+// Pide la ubicacion directamente al cargar la vista
+onMounted(() => {
+    getLocation();
+});
 </script>

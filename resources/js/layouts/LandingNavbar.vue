@@ -176,7 +176,7 @@ const isDesktop = ref(window.innerWidth >= 992);
 const { processing, logout } = useAuth();
 const { toggleDarkMode, isDarkTheme, setDefaultMode } = useLayout();
 
-// Yo controlo los enlaces que se ven arriba en el menú
+// Controlo los enlaces que se ven arriba en el menú
 const navLinks = computed(() => {
     const links = [
         { label: 'Inicio', route: '/', icon: 'pi pi-home' }
