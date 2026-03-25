@@ -7,7 +7,7 @@
                         <img src="/images/logo.png" alt="Logo" class="h-8 w-auto" onerror="this.style.display='none'" />
                         <span class="text-xl font-bold text-primary">LocalEvents</span>
                     </router-link>
-                    <p class="text-surface-500 text-sm">copy rith 2026</p>
+                    <p class="text-surface-500 text-sm">copyright 2026</p>
                 </div>
 
                 <div class="flex flex-col items-center md:items-end">
@@ -36,5 +36,5 @@
 </template>
 
 <script setup>
-// Yo defino este componente para que sea el pie de pagina de todo el sitio
+// defino este componente para que sea el pie de pagina de todo el sitio
 </script>

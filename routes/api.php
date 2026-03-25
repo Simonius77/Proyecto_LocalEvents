@@ -28,16 +28,16 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 
     Route::get('role-list', [RoleController::class, 'getList']);
     Route::get('role-permissions/{id}', [PermissionController::class, 'getRolePermissions']);
-    // Yo defino aqui las rutas para que el admin pueda tocar los permisos
+    // Defino aqui las rutas para que el admin pueda tocar los permisos
     Route::put('/role-permissions', [PermissionController::class, 'updateRolePermissions']);
     Route::apiResource('permissions', PermissionController::class);
     
-    // Yo pongo aqui las rutas de las reservas para crear, pagar y cancelar
+    // Pongo aqui las rutas de las reservas para crear, pagar y cancelar
     Route::apiResource('reservas', \App\Http\Controllers\Api\ReservaController::class);
     Route::post('reservas/{id}/pagar', [\App\Http\Controllers\Api\ReservaController::class, 'pagar']);
     Route::post('reservas/{id}/solicitar-cancelacion', [\App\Http\Controllers\Api\ReservaController::class, 'solicitarCancelacion']);
 
-    // Yo manejo aqui los datos del perfil del usuario
+    // Manejo aqui los datos del perfil del usuario
     Route::get('/user', [ProfileController::class, 'user']);
     Route::get('/user/signin', [ProfileController::class, 'user']);
     Route::put('/user', [ProfileController::class, 'update']);

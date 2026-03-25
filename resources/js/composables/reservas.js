@@ -2,13 +2,13 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useToast } from './useToast'
 
-// Yo guardo las funciones para que el frontend pueda manejar las reservas
+// Guardo las funciones para que el frontend pueda manejar las reservas
 export default function useReservas() {
     const reservas = ref([])
     const isLoading = ref(false)
     const toast = useToast()
 
-    // Yo pido al servidor la lista de reservas que existen
+    // Pido al servidor la lista de reservas que existen
     const getReservas = async () => {
         isLoading.value = true
         try {
@@ -22,7 +22,7 @@ export default function useReservas() {
         }
     }
 
-    // Yo mando la peticion para crear una reserva nueva de un evento
+    // Mando la peticion para crear una reserva nueva de un evento
     const crearReserva = async (id_evento, cantidad = 1) => {
         try {
             const response = await axios.post('/api/reservas', { id_evento, cantidad })
@@ -34,7 +34,7 @@ export default function useReservas() {
         }
     }
 
-    // Yo le digo al servidor que el usuario quiere pagar su reserva
+    // Le digo al servidor que el usuario quiere pagar su reserva
     const pagarReserva = async (id) => {
         try {
             await axios.post(`/api/reservas/${id}/pagar`)
@@ -45,7 +45,7 @@ export default function useReservas() {
         }
     }
 
-    // Yo aviso que el usuario ha pedido cancelar el evento
+    // Aviso que el usuario ha pedido cancelar el evento
     const solicitarCancelacion = async (id) => {
         try {
             await axios.post(`/api/reservas/${id}/solicitar-cancelacion`)
@@ -56,7 +56,7 @@ export default function useReservas() {
         }
     }
 
-    // Yo pido que se borre definitivamente el registro de la reserva
+    // Pido que se borre definitivamente el registro de la reserva
     const eliminarReserva = async (id) => {
         try {
             await axios.delete(`/api/reservas/${id}`)

@@ -7,8 +7,9 @@ use App\Models\Reserva;
 use App\Models\Evento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\ReservaResource;
 
-// Yo manejo todas las peticiones que tienen que ver con las reservas de eventos
+// Manejo todas las peticiones que tienen que ver con las reservas de eventos
 class ReservaController extends Controller
 {
     // Aqui listo las reservas. Si soy admin veo todas, si no solo las micas
@@ -16,20 +17,20 @@ class ReservaController extends Controller
     {
         $user = Auth::user();
         if ($user->rol === 'administrador') {
-            return response()->json([
-                'data' => Reserva::with(['usuario', 'evento'])->latest()->get()
-            ]);
+            return ReservaResource::collection(
+                Reserva::with(['usuario', 'evento'])->latest()->get()
+            );
         }
         
-        return response()->json([
-            'data' => Reserva::with('evento')
+        return ReservaResource::collection(
+            Reserva::with('evento')
                 ->where('id_usuario', $user->id_usuario)
                 ->latest()
                 ->get()
-        ]);
+        );
     }
 
-    // Yo guardo una nueva reserva en la base de datos con los datos que me mandan
+    // Guardo una nueva reserva en la base de datos con los datos que me mandan
     public function store(Request $request)
     {
         $request->validate([
@@ -38,31 +39,26 @@ class ReservaController extends Controller
         ]);
 
         $evento = Evento::findOrFail($request->id_evento);
+        $total = $evento->precio * $request->cantidad;
         
         $reserva = Reserva::create([
             'id_usuario' => Auth::id(),
             'id_evento' => $request->id_evento,
             'cantidad' => $request->cantidad,
-            'total' => $evento->precio * $request->cantidad,
-            'estado' => 'pendiente'
+            'total' => $total,
+            'estado' => ($total > 0) ? 'pendiente' : 'confirmado'
         ]);
 
-        return response()->json([
-            'message' => 'Reserva realizada con exito',
-            'data' => $reserva->load('evento')
-        ], 201);
+        return new ReservaResource($reserva->load('evento'));
     }
 
-    // Yo marco una reserva como pagada cuando el usuario pulsa el boton
+    // Marco una reserva como pagada cuando el usuario pulsa el boton
     public function pagar($id)
     {
         $reserva = Reserva::where('id_usuario', Auth::id())->findOrFail($id);
         $reserva->update(['estado' => 'pagado']);
 
-        return response()->json([
-            'message' => 'Reserva pagada correctamente',
-            'data' => $reserva
-        ]);
+        return new ReservaResource($reserva->load('evento'));
     }
 
     // Aqui anoto que el usuario quiere cancelar su reserva para que lo vea el jefe
@@ -71,10 +67,7 @@ class ReservaController extends Controller
         $reserva = Reserva::where('id_usuario', Auth::id())->findOrFail($id);
         $reserva->update(['estado' => 'solicitada_cancelacion']);
 
-        return response()->json([
-            'message' => 'Cancelacion solicitada al administrador y organizador',
-            'data' => $reserva
-        ]);
+        return new ReservaResource($reserva->load('evento'));
     }
 
     // Muestro los detalles de una reserva suelta
@@ -84,7 +77,7 @@ class ReservaController extends Controller
         return response()->json(['data' => $reserva]);
     }
 
-    // Yo borro la reserva si el que lo pide es el dueno o el admin
+    // Borro la reserva si el que lo pide es el dueno o el admin
     public function destroy($id)
     {
         $user = Auth::user();

@@ -17,6 +17,7 @@ class EventoResource extends JsonResource
             'limite_edad' => $this->limite_edad,
             'fecha_inicio' => $this->fecha_inicio,
             'fecha_fin' => $this->fecha_fin,
+            'imagen' => $this->getFirstMediaUrl('imagenes_eventos'),
             'categoria' => $this->whenLoaded('categoria'),
             'organizador' => $this->whenLoaded('organizador'),
         ];

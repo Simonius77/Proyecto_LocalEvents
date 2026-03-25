@@ -11,5 +11,5 @@
 </template>
 
 <script setup>
-// Yo aviso del uso de cookies tecnicas para el funcionamiento del sitio
+// Aviso del uso de cookies tecnicas para el funcionamiento del sitio
 </script>

@@ -87,7 +87,7 @@
                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                 ¿No tienes una cuenta?
                                 <router-link
-                                    :to="{ name: 'auth.register' }"
+                                    :to="{ name: 'public.register' }"
                                     class="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                                 >
                                     Regístrate aquí

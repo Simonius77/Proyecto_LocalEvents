@@ -50,4 +50,8 @@ export const authStore = defineStore("authStore", () => {
     }
 
     return { user, authenticated, token, setToken, login, is, getUser, getUserSignIn, logout };
-}, { persist: true });
+}, {
+    persist: {
+        storage: sessionStorage,
+    }
+});

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Evento extends Model
+class Evento extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $table = 'eventos';
     protected $primaryKey = 'id_evento';
@@ -31,7 +33,7 @@ class Evento extends Model
      */
     public function categoria()
     {
-        return $this->belongsTo(Category::class, 'id_categoria', 'id');
+        return $this->belongsTo(categoria::class, 'id_categoria', 'id_categoria');
     }
 
     /**

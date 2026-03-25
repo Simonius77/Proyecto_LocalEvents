@@ -1,5 +1,9 @@
+
+<!-- Vista para gestionar las categorias desde el panel de administrador -->
 <template>
+    <!-- Contenedor principal de la pagina -->
     <div class="categories-page">
+        <!-- Tarjeta que envuelve el contenido -->
         <Card>
             <template #title>
                 <div class="flex items-center justify-between w-full">
@@ -30,6 +34,7 @@
                 Administra y gestiona las categorías del sistema. Crea, edita y elimina categorías según tus permisos.
             </template>
 
+            <!-- Contenido principal con la tabla -->
             <template #content>
                 <div v-if="isLoading" class="table-loading-skeleton space-y-3">
                     <div
@@ -46,6 +51,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Tabla de datos con filtros y paginacion -->
                 <DataTable
                     v-else
                     v-model:filters="filters"
@@ -130,6 +136,7 @@
             </template>
         </Card>
 
+        <!-- Ventana emergente para crear o editar categorias -->
         <Dialog
             v-model:visible="categoryDialog.open"
             modal
@@ -179,24 +186,30 @@
 </template>
 
 <script setup>
+// Logica del componente de categorias
+// Importacion de librerias y herramientas necesarias
 import { ref, reactive, computed, onMounted, inject, watch } from "vue";
 import useCategories from "@/composables/categories";
 import { useAbility } from '@casl/vue';
 import { FilterMatchMode, FilterOperator  } from "@primevue/core/api";
 
+// Uso de composables y utilidades de la aplicacion
 const FILTERS_STORAGE_KEY = 'admin_categories_table_filters';
 const {categories, category, getCategories, createCategory, updateCategory, deleteCategory, resetCategory, setCategory, hasError, getError, upsertCategoryRecord, isLoading } = useCategories();
 const { can } = useAbility();
 
+// Inyeccion de servicios externos como SweetAlert
 const swal = inject('$swal');
 const canUseBrowserStorage = typeof window !== 'undefined';
 
+// Estado de los filtros de la tabla
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 });
 
+// Control del dialogo de categorias
 const categoryDialog = reactive({
     open: false,
     type: 'create'
@@ -205,6 +218,7 @@ const categoryDialog = reactive({
 const isSubmitting = computed(() => isLoading.value);
 const skeletonRows = Array.from({ length: 5 }, (_, index) => index);
 
+// Guarda los filtros en el navegador para no perderlos al recargar
 const saveFiltersToStorage = (currentFilters) => {
     if (!canUseBrowserStorage) return;
     try {
@@ -234,23 +248,27 @@ watch(filters, (newFilters) => {
     saveFiltersToStorage(newFilters);
 }, { deep: true });
 
+// Abre el dialogo para crear una nueva categoria
 const openCreateDialog = () => {
     resetCategory();
     categoryDialog.type = 'create';
     categoryDialog.open = true;
 };
 
+// Abre el dialogo para editar una categoria existente
 const openEditDialog = (currentCategory) => {
     setCategory(currentCategory);
     categoryDialog.type = 'edit';
     categoryDialog.open = true;
 };
 
+// Cierra la ventana emergente y limpia los datos
 const closeDialog = () => {
     categoryDialog.open = false;
     resetCategory();
 };
 
+// Envia la peticion para crear la categoria
 const submitCreate = () => {
     if (isSubmitting.value) return;
 
@@ -263,6 +281,7 @@ const submitCreate = () => {
         });
 };
 
+// Envia la peticion para actualizar la categoria
 const submitUpdate = () => {
     if (isSubmitting.value) return;
 
@@ -275,10 +294,12 @@ const submitUpdate = () => {
         });
 };
 
+// Llama al servicio para borrar la categoria por su id
 const performDelete = (id) => {
     deleteCategory(id);
 };
 
+// Muestra una alerta para confirmar la eliminacion
 const confirmDeleteCategory = (currentCategory) => {
     if (!swal) {
         performDelete(currentCategory.id);
@@ -300,6 +321,7 @@ const confirmDeleteCategory = (currentCategory) => {
     });
 };
 
+// Convierte la fecha a un formato legible
 const formatDate = (dateString) => {
     if (!dateString) return '-';
     const date = new Date(dateString);
@@ -310,6 +332,7 @@ const formatDate = (dateString) => {
     });
 };
 
+// Se ejecuta cuando el componente se monta en la pantalla
 onMounted(() => {
     restoreFiltersFromStorage();
     getCategories();

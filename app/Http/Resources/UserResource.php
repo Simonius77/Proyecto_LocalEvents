@@ -16,9 +16,16 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $apellidos = explode(' ', $this->apellidos ?? '', 2);
+        $surname1 = $apellidos[0] ?? '';
+        $surname2 = $apellidos[1] ?? '';
+
         return [
             'id' => $this->id_usuario,
-            'nombre' => $this->nombre,
+            'name' => $this->nombre,
+            'nombre' => $this->nombre, // Mantener por compatibilidad si hace falta
+            'surname1' => $surname1,
+            'surname2' => $surname2,
             'apellidos' => $this->apellidos,
             'email' => $this->email,
             'roles' => RoleResource::collection($this->roles),

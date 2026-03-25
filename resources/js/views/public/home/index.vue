@@ -6,7 +6,7 @@
         <div class="flex gap-4 mb-12" v-if="!authStore().authenticated">
             <template v-if="!authStore().user?.name">
                 <Button label="Iniciar Sesión" as="router-link" to="/login" size="large" />
-                <Button label="Registrarse" as="router-link" to="/register" severity="secondary" size="large" />
+                <Button label="Registrarse" as="router-link" :to="{ name: 'public.register' }" severity="secondary" size="large" />
             </template>
         </div>
         <div class="flex gap-4 mb-12" v-else>
@@ -95,7 +95,7 @@
 </template>
 
 <script setup>
-// Yo importo lo que necesito para que funcione la pagina
+// Importo lo que necesito para que funcione la pagina
 import { onMounted, ref } from 'vue';
 import { authStore } from "@/store/auth";
 import { useRouter } from 'vue-router';
@@ -112,13 +112,13 @@ const loading = ref(true);
 const displayDialog = ref(false);
 const selectedEvento = ref(null);
 
-// Yo guardo el evento elegido y abro la ventana de detalles
+// Guardo el evento elegido y abro la ventana de detalles
 const showDetalles = (evento) => {
     selectedEvento.value = evento;
     displayDialog.value = true;
 };
 
-// Yo manejo lo que pasa cuando alguien pulsa el boton de reservar
+// Manejo lo que pasa cuando alguien pulsa el boton de reservar
 const handleReserva = async (evento) => {
     if (!auth.authenticated) {
         // Si no ha entrado, lo mando al login
@@ -129,7 +129,7 @@ const handleReserva = async (evento) => {
     await crearReserva(evento.id_evento, 1);
 };
 
-// Yo pido la lista de eventos al servidor
+// Pido la lista de eventos al servidor
 const fetchEventos = async () => {
     try {
         const response = await axios.get('/api/eventos-list');

@@ -38,9 +38,30 @@ export default function useAuth() {
         nombre: '',
         apellidos: '',
         email: '',
-        password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        // Se inician las coordenadas vacias
+        latitud: null,
+        longitud: null
     })
+
+    // Funcion para pedir la ubicacion al arrancar
+    const getLocation = () => {
+        if (!navigator.geolocation) {
+            console.warn('Geolocalizacion no soportada por el navegador')
+            return
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                registerForm.latitud = position.coords.latitude
+                registerForm.longitud = position.coords.longitude
+                console.log('Ubicacion obtenida:', registerForm.latitud, registerForm.longitud)
+            },
+            (error) => {
+                console.error('Error al obtener la ubicacion:', error.message)
+            }
+        )
+    }
 
     // Funcion para procesar el inicio de sesion
     const submitLogin = async () => {
@@ -74,8 +95,8 @@ export default function useAuth() {
                 showConfirmButton: false,
                 timer: 1500
             })
-            // Redirigimos al panel de administracion
-            await router.push({ name: 'admin.index' })
+            // Redirigimos a la página de inicio
+            await router.push({ name: 'public.home' })
         } catch (error) {
             // Manejo de errores protegidos
             if (error.response?.data) {
@@ -125,7 +146,7 @@ export default function useAuth() {
                 timer: 3000
             })
             // Redirigimos al usuario a la pantalla de login
-            await router.push({ name: 'auth.login' })
+            await router.push({ name: 'public.login' })
         } catch (error) {
             // Si hay un error, lo capturamos aqui
             if (error.response?.data) {
@@ -190,7 +211,7 @@ export default function useAuth() {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                await router.push({ name: 'auth.login' })
+                await router.push({ name: 'public.login' })
             })
             .catch(error => {
                 if (error.response?.data) {
@@ -201,10 +222,8 @@ export default function useAuth() {
     }
 
     const loginUser = () => {
-        //const auth = authStore(); //TODO test
-        console.log('GettingUserSignIn: loginUser')
-        user = auth.user
-        // Cookies.set('loggedIn', true)
+        console.log('Regenerando reactividad de usuario')
+        Object.assign(user, auth.user)
         getAbilities()
     }
 
@@ -245,12 +264,11 @@ export default function useAuth() {
             })
             .finally(() => {
                 // Siempre limpiamos los datos locales del usuario
-                user.name = ''
-                user.email = ''
+                Object.assign(user, { name: '', email: '', nombre: '', apellidos: '', roles: [] })
                 auth.logout()
 
                 // Redirigimos al usuario a la pantalla de login
-                router.push({ name: 'auth.login' })
+                router.push({ name: 'public.login' })
 
                 processing.value = false
             })
@@ -281,6 +299,7 @@ export default function useAuth() {
         getUser,
         getUserSignIn,
         logout,
-        getAbilities
+        getAbilities,
+        getLocation
     }
 }

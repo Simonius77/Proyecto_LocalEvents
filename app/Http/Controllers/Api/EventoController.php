@@ -9,13 +9,13 @@ use App\Http\Resources\EventoResource;
 use App\Models\evento;
 use Illuminate\Http\Request;
 
-// Yo uso este controlador para que se puedan manejar los eventos desde fuera
+// Uso este controlador para que se puedan manejar los eventos desde fuera
 class EventoController extends Controller
 {
-    // Yo listo los eventos y permito que se busquen por nombre o id
+    // Listo los eventos y permito que se busquen por nombre o id
     public function index()
     {
-        // Yo elijo como ordenar la lista, por defecto por fecha de creacion
+        // Elijo como ordenar la lista, por defecto por fecha de creacion
         $orderColumn = request('order_column', 'created_at');
         if (!in_array($orderColumn, ['id_evento', 'nombre', 'created_at'])) {
             $orderColumn = 'created_at';
@@ -25,7 +25,7 @@ class EventoController extends Controller
             $orderDirection = 'desc';
         }
 
-        // Yo busco los eventos segun lo que el usuario escriba en el buscador
+        // Busco los eventos segun lo que el usuario escriba en el buscador
         $eventos = Evento::
             when(request('search_id'), function ($query) {
                 $query->where('id_evento', request('search_id'));
@@ -42,14 +42,14 @@ class EventoController extends Controller
         return EventoResource::collection($eventos);
     }
 
-    // Yo guardo un evento nuevo y tambien me encargo de guardar la foto si hay
+    // Guardo un evento nuevo y tambien me encargo de guardar la foto si hay
     public function store(StoreEventoRequest $request)
     {
-        // Yo anoto quien es el que crea el evento usando su id de usuario
+        // Anoto quien es el que crea el evento usando su id de usuario
         $validatedData = $request->validated();
         $validatedData['id_organizador'] = \Illuminate\Support\Facades\Auth::id();
 
-        // Yo creo el registro en la base de datos
+        // Creo el registro en la base de datos
         $evento = evento::create($validatedData);
 
         // Si me mandan una imagen, yo la guardo en la carpeta de imagenes
@@ -60,16 +60,16 @@ class EventoController extends Controller
         return new EventoResource($evento);
     }
 
-    // Yo enseño los datos de un solo evento
+    // Enseño los datos de un solo evento
     public function show(evento $evento)
     {
         return new EventoResource($evento);
     }
 
-    // Yo pongo al dia los datos de un evento cuando alguien los cambia
+    // Pongo al dia los datos de un evento cuando alguien los cambia
     public function update(evento $evento, UpdateEventoRequest $request)
     {
-        // Yo actualizo el texto del evento
+        // Actualizo el texto del evento
         $evento->update($request->validated());
 
         // Si me pasan una foto nueva, yo borro la vieja y pongo la de ahora
@@ -81,7 +81,7 @@ class EventoController extends Controller
         return new EventoResource($evento);
     }
 
-    // Yo borro el evento si el usuario tiene permiso para hacerlo
+    // Borro el evento si el usuario tiene permiso para hacerlo
     public function destroy(evento $evento)
     {
         $currentUserId = \Illuminate\Support\Facades\Auth::id();
@@ -102,7 +102,7 @@ class EventoController extends Controller
         return response()->noContent();
     }
 
-    // Yo traigo todos los eventos de golpe para la pagina principal
+    // Traigo todos los eventos de golpe para la pagina principal
     public function getList()
     {
         return EventoResource::collection(evento::all());
