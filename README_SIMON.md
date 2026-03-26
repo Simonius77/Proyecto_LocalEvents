@@ -82,7 +82,7 @@ la vista del menu lateral de la vista perfil esta en layouts/MainSidebar.vue
 IMAGENES DE EVENTOS
 Las carpetas con los números 1, 2 y 3 que ves dentro de la carpeta storage/app/public (que normalmente están enlazadas a public/storage) son generadas automáticamente por una librería llamada Spatie MediaLibrary.
 
-Aquí te explico su función de forma simple:
+explicacion de su función de forma simple:
 
 Organización: Cada vez que subes una imagen para un evento o un usuario, la librería crea una carpeta con el numero de ID del archivo en la base de datos.
 Evitar conflictos: Al poner cada imagen en su propia carpeta numerada, se evita que dos archivos con el mismo nombre se borren el uno al otro.

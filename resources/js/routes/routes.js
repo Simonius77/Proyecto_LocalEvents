@@ -167,6 +167,24 @@ export default [
                     breadCrumb: 'Mis Reservas',
                 },
             },
+            // Ruta para gestionar el carrito de la compra con las entradas pendientes
+            {
+                name: 'app.carrito',
+                path: 'carrito',
+                component: () => import('../views/user/Carrito.vue'),
+                meta: {
+                    breadCrumb: 'Carrito',
+                },
+            },
+            // Ruta para consultar los tickets y facturas ya abonados
+            {
+                name: 'app.historico',
+                path: 'historico',
+                component: () => import('../views/user/Historico.vue'),
+                meta: {
+                    breadCrumb: 'Histórico de Compras',
+                },
+            },
 
         ]
     },

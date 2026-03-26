@@ -24,6 +24,18 @@ const items = computed(() => {
                     icon: 'pi pi-calendar',
                     route: '/app/reservas'
                 },
+                // Enlace directo al carrito del usuario
+                {
+                    label: 'Mi Carrito',
+                    icon: 'pi pi-shopping-cart',
+                    route: '/app/carrito'
+                },
+                // Enlace directo al registro de compras pasadas
+                {
+                    label: 'Histórico de Compras',
+                    icon: 'pi pi-history',
+                    route: '/app/historico'
+                },
             ]
         },
         {

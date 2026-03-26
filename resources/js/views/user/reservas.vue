@@ -36,7 +36,7 @@
 
         <!-- List View -->
         <div v-else class="grid grid-cols-1 gap-6">
-            <Card v-for="reserva in reservas" :key="reserva.id_reserva" class="overflow-hidden border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+            <Card v-for="reserva in reservasActivas" :key="reserva.id_reserva" class="overflow-hidden border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
                 <template #content>
                     <div class="flex flex-col md:flex-row gap-8 p-1">
                         <!-- Left: Event Basic Info -->
@@ -85,14 +85,23 @@
                             </div>
 
                             <div class="flex flex-col gap-2">
-                                <Button 
-                                    v-if="reserva.estado === 'pendiente' && reserva.total > 0" 
-                                    label="Realizar Pago" 
-                                    icon="pi pi-credit-card" 
-                                    severity="success" 
-                                    class="w-full rounded-xl py-3 font-bold"
-                                    @click="pagarReserva(reserva.id_reserva)"
-                                />
+                                <div v-if="reserva.estado === 'pendiente' && reserva.total > 0" class="w-full">
+                                    <div v-if="reserva.evento_caducado" class="text-red-500 font-bold text-center p-2 mb-2 bg-red-50 dark:bg-red-900/20 rounded-xl text-sm transition-all border border-red-100 dark:border-red-800">
+                                        <i class="pi pi-exclamation-triangle mr-2"></i>Evento Caducado
+                                    </div>
+                                    <div v-else-if="!reserva.aforo_disponible" class="text-orange-500 font-bold text-center p-2 mb-2 bg-orange-50 dark:bg-orange-900/20 rounded-xl text-sm transition-all border border-orange-100 dark:border-orange-800">
+                                        <i class="pi pi-info-circle mr-2"></i>Aforo Completo
+                                    </div>
+                                    <Button 
+                                        v-else
+                                        :label="yaEnCarrito(reserva.id_reserva) ? 'En Carrito' : 'Añadir al Carrito'" 
+                                        :icon="yaEnCarrito(reserva.id_reserva) ? 'pi pi-check' : 'pi pi-shopping-cart'" 
+                                        :severity="yaEnCarrito(reserva.id_reserva) ? 'secondary' : 'success'" 
+                                        :disabled="yaEnCarrito(reserva.id_reserva)"
+                                        class="w-full rounded-xl py-3 font-bold transition-all shadow-sm"
+                                        @click="aniadirACarrito(reserva)"
+                                    />
+                                </div>
                                 
                                 <Button 
                                     v-if="['pendiente', 'pagado', 'confirmado'].includes(reserva.estado)" 
@@ -124,14 +133,34 @@
 
 <script setup>
 // Traigo las herramientas para manejar las reservas
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import useReservas from '@/composables/reservas';
+import useCarrito from '@/composables/carrito';
 import { useConfirm } from "primevue/useconfirm";
+import { useToast } from '@/composables/useToast';
 
 const confirm = useConfirm();
-const { reservas, isLoading, getReservas, pagarReserva, solicitarCancelacion, eliminarReserva } = useReservas();
+const toast = useToast();
+const { reservas, isLoading, getReservas, solicitarCancelacion, eliminarReserva } = useReservas();
+const { agregarAlCarrito, carrito } = useCarrito();
 
-// Decido el color del aviso segun como este la reserva
+// Filtro la lista completa para quedarme solo con las reservas activas (pendientes o canceladas)
+const reservasActivas = computed(() => {
+    return reservas.value.filter(r => ['pendiente', 'solicitada_cancelacion', 'cancelado'].includes(r.estado));
+});
+
+// Añado una reserva suelta al carrito y muestro un mensaje verde al usuario
+const aniadirACarrito = (reserva) => {
+    agregarAlCarrito(reserva);
+    toast.success('Anadido', 'Entrada anadida a tu carrito');
+};
+
+// Compruebo si este evento en cuestion ya se encuentra metido en el carrito actual
+const yaEnCarrito = (id) => {
+    return carrito.value.some(item => item.id_reserva === id);
+};
+
+// Elijo que color pinta la etiqueta segun el estado tecnico de la reserva
 const getStatusSeverity = (status) => {
     switch (status) {
         case 'pagado':
@@ -147,7 +176,7 @@ const formatStatus = (status) => {
     return status.replace(/_/g, ' ');
 };
 
-// Cambio el formato de la fecha para que se lea bien
+// Cambio el formato de la fecha de base de datos para que se lea lo mas claro posible
 const formatDate = (date) => {
     if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('es-ES', {
@@ -159,12 +188,13 @@ const formatDate = (date) => {
     });
 };
 
+// Le pregunto dos veces al usuario antes de borrar su reserva para evitar accidentes
 const confirmarBorrado = (id) => {
     confirm.require({
-        message: '¿Estás seguro de que quieres eliminar este registro de tu historial?',
-        header: 'Confirmar Eliminación',
+        message: '¿Estas seguro de que quieres eliminar este registro de tu historial?',
+        header: 'Confirmar Eliminacion',
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Sí, eliminar',
+        acceptLabel: 'Si, eliminar',
         rejectLabel: 'No, mantener',
         acceptClass: 'p-button-danger rounded-xl',
         rejectClass: 'p-button-secondary p-button-text rounded-xl',
@@ -174,7 +204,7 @@ const confirmarBorrado = (id) => {
     });
 };
 
-// Cuando se carga la pantalla, yo pido la lista de reservas
+// Nada mas cargarse la pantalla completa, pido todas las reservas al servidor
 onMounted(() => {
     getReservas();
 });
