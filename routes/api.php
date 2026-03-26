@@ -33,6 +33,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::apiResource('permissions', PermissionController::class);
     
     // Pongo aqui las rutas de las reservas para crear, pagar y cancelar
+    Route::get('reservas-cancelaciones', [\App\Http\Controllers\Api\ReservaController::class, 'getCancelacionesPendientes']);
+    Route::post('reservas/{id}/confirmar-cancelacion', [\App\Http\Controllers\Api\ReservaController::class, 'confirmarCancelacion']);
     Route::apiResource('reservas', \App\Http\Controllers\Api\ReservaController::class);
     Route::post('reservas/{id}/pagar', [\App\Http\Controllers\Api\ReservaController::class, 'pagar']);
     Route::post('reservas/{id}/solicitar-cancelacion', [\App\Http\Controllers\Api\ReservaController::class, 'solicitarCancelacion']);

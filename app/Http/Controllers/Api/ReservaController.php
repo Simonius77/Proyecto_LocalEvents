@@ -90,4 +90,46 @@ class ReservaController extends Controller
 
         return response()->json(['message' => 'No autorizado'], 403);
     }
+
+    // Obtengo todas las reservas que los usuarios han pedido cancelar
+    public function getCancelacionesPendientes()
+    {
+        $user = Auth::user();
+        
+        // Si el usuario revisando es el administrador le descargo todas las de la plataforma entera
+        if ($user->rol === 'administrador') {
+            return ReservaResource::collection(
+                Reserva::with(['usuario', 'evento'])
+                    ->where('estado', 'solicitada_cancelacion')
+                    ->latest()
+                    ->get()
+            );
+        }
+        
+        // Si el usuario es organizador busco unicamente las cancelaciones de sus eventos
+        return ReservaResource::collection(
+            Reserva::with(['usuario', 'evento'])
+                ->whereHas('evento', function ($query) use ($user) {
+                    $query->where('id_organizador', $user->id_usuario);
+                })
+                ->where('estado', 'solicitada_cancelacion')
+                ->latest()
+                ->get()
+        );
+    }
+
+    // Confirmo la cancelacion de una reserva para liberar el aforo y marcarla como cancelada oficialmente
+    public function confirmarCancelacion($id)
+    {
+        $user = Auth::user();
+        $reserva = Reserva::with('evento')->findOrFail($id);
+        
+        // Compruebo que quien intenta cancelar es el admin general o el dueño legitimo de la publicacion del evento
+        if ($user->rol === 'administrador' || $reserva->evento->id_organizador === $user->id_usuario) {
+            $reserva->update(['estado' => 'cancelado']);
+            return new ReservaResource($reserva);
+        }
+        
+        return response()->json(['message' => 'No autorizado para cancelar'], 403);
+    }
 }

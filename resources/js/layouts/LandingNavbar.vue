@@ -159,6 +159,7 @@
 </template>
 
 <script setup>
+// Importa las herramientas y recursos que necesito para que la barra de navegacion funcione
 import { useLayout } from "@/composables/layout.js";
 import useAuth from "@/composables/auth";
 import { authStore } from "../store/auth";
@@ -166,23 +167,27 @@ import LocaleSwitcher from "../components/LocaleSwitcher.vue";
 import { ref, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
+// Prepara las variables basicas para mover al usuario y saber su estado
 const router = useRouter();
 const auth = authStore();
+
+// Crea variables reactivas para controlar los menus y la pantalla
 const menu = ref();
 const visibleMobileMenu = ref(false);
 const isScrolled = ref(false);
 const isDesktop = ref(window.innerWidth >= 992);
 
+// Extrae funciones utiles de los archivos externos
 const { processing, logout } = useAuth();
 const { toggleDarkMode, isDarkTheme, setDefaultMode } = useLayout();
 
-// Controlo los enlaces que se ven arriba en el menú
+// Controla los enlaces que se ven arriba en el menu dinamico
 const navLinks = computed(() => {
     const links = [
         { label: 'Inicio', route: '/', icon: 'pi pi-home' }
     ];
     
-    // Si detecto que el usuario tiene un rol, le pongo su panel correspondiente
+    // Si detecta que el usuario tiene un rol, le pone su panel correspondiente
     if (auth.authenticated && auth.user?.roles) {
         if (auth.user.roles.some(r => (r.nombre || r.name || '').toLowerCase().includes('admin'))) {
             links.push({ label: 'Panel Administrador', route: '/admin', icon: 'pi pi-cog' });
@@ -196,6 +201,7 @@ const navLinks = computed(() => {
     return links;
 });
 
+// Construye el menu desplegable del perfil del usuario con todas sus opciones
 const items = computed(() => [
     {
         items: [
@@ -231,38 +237,46 @@ const items = computed(() => [
     }
 ]);
 
+// Metodo para abrir y cerrar el menu desplegable de la foto de perfil
 const toggle = (event) => {
     menu.value.toggle(event);
 };
 
+// Envia al usuario directo a su panel de control y cierra el menu de la vista movil
 const navigateToDashboard = () => {
     visibleMobileMenu.value = false;
     router.push('/app');
 }
 
+// Cierra la sesion del usuario de forma segura usando el auth y cierra el menu movil
 const handleLogout = () => {
     visibleMobileMenu.value = false;
     logout();
 }
 
+// Esta variable detecta si la persona ha bajado un poquito la pagina
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 20;
 }
 
+// Comprueba la anchura real de la pantalla para saber si estamos en pc o en movil
 const handleResize = () => {
     isDesktop.value = window.innerWidth >= 992;
 }
 
+// Cuando se carga todo arranco los escuchadores de los eventos del navegador
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
 });
 
+// Limpia la memoria borrando los escuchadores si navegamos a otra pantalla
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
     window.removeEventListener('resize', handleResize);
 });
 
+// Antes de montar la imagen aplico forzosamente el color generico inicial
 onBeforeMount(() => {
     setDefaultMode()
 })

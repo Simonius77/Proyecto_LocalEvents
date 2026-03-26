@@ -88,6 +88,21 @@
                     </div>
                 </template>
             </Card>
+
+            <!-- Marcador especial administrador de Cancelaciones Globales -->
+            <Card v-if="cancelaciones.length > 0" class="dashboard-stat-card border-2 border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800 cursor-pointer" @click="scrollToCancelaciones">
+                <template #content>
+                    <div class="stat-card-content">
+                        <div class="stat-card-icon bg-orange-500 text-white animate-pulse">
+                            <i class="pi pi-bell"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <p class="stat-card-label text-orange-800 dark:text-orange-400 font-bold">Cancelaciones</p>
+                            <p class="stat-card-value text-orange-600 dark:text-orange-500">{{ cancelaciones.length }}</p>
+                        </div>
+                    </div>
+                </template>
+            </Card>
         </div>
 
         <!-- Quick Actions Card -->
@@ -186,6 +201,28 @@
                 </div>
             </template>
         </Card>
+
+        <!-- Bloque de revision de cancelaciones para el Administrador Global -->
+        <div id="cancelaciones-admin" v-if="cancelaciones.length > 0" class="mt-8">
+            <h2 class="text-xl font-bold mb-4 text-orange-800 dark:text-orange-400 flex items-center gap-2">
+                <i class="pi pi-exclamation-circle text-orange-500"></i> Aprobar Solicitudes de Cancelacion (Global Administrador)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Card v-for="canc in cancelaciones" :key="canc.id_reserva" class="border border-orange-200 shadow-sm dark:bg-gray-800">
+                    <template #content>
+                        <div class="flex flex-col gap-3">
+                            <div>
+                                <p class="font-bold text-gray-800 dark:text-white line-clamp-1">{{ canc.evento?.nombre }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Usuario: {{ canc.usuario?.name || canc.usuario?.nombre || 'Usuario' }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Aforo a liberar: {{ canc.cantidad }}</p>
+                            </div>
+                            <Button label="Aprobar" icon="pi pi-check" severity="danger" class="w-full" @click="aprobarCancelacion(canc.id_reserva)" />
+                        </div>
+                    </template>
+                </Card>
+            </div>
+            <ConfirmDialog></ConfirmDialog>
+        </div>
     </div>
 </template>
 
@@ -196,6 +233,12 @@ import usePosts from "../../composables/posts";
 import useCategories from "../../composables/categories";
 import useEventos from "../../composables/eventos";
 import useRoles from "../../composables/roles";
+import useCancelaciones from '@/composables/cancelaciones';
+import { useConfirm } from "primevue/useconfirm";
+
+// Preparo herramientas de aviso
+const confirm = useConfirm();
+const { cancelaciones, getCancelacionesPendientes, confirmarCancelacion } = useCancelaciones();
 
 const stats = ref({
     users: 0,
@@ -218,7 +261,8 @@ const loadStats = async () => {
             getPosts(),
             getCategories(),
             getEventos(),
-            getRoles()
+            getRoles(),
+            getCancelacionesPendientes()
         ]);
         
         stats.value = {
@@ -231,6 +275,30 @@ const loadStats = async () => {
     } catch (error) {
         console.error('Error loading stats:', error);
     }
+};
+
+// Mueve la pantalla automaticamente hasta la lista de cancelaciones si el admin pincha el marcador
+const scrollToCancelaciones = () => {
+    const table = document.getElementById('cancelaciones-admin');
+    if (table) {
+        table.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Logica oficial de aprobacion de cancelaciones global (admin)
+const aprobarCancelacion = (id) => {
+    confirm.require({
+        message: '¿Estas seguro de aprobar esta cancelacion de manera global? El aforo de este evento se vera liberado.',
+        header: 'Confirmar Cancelacion Administrador',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Si, cancelar',
+        rejectLabel: 'Cerrar',
+        acceptClass: 'p-button-danger rounded-xl',
+        rejectClass: 'p-button-secondary p-button-text rounded-xl',
+        accept: () => {
+            confirmarCancelacion(id);
+        }
+    });
 };
 
 onMounted(() => {

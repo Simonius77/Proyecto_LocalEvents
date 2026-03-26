@@ -76,9 +76,9 @@
                         <!-- Right: Pricing and Actions -->
                         <div class="md:w-64 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-800 pt-6 md:pt-0 md:pl-8">
                             <div class="mb-6">
-                                <p class="text-xs uppercase font-bold text-gray-400 mb-1">Total abonado</p>
+                                <p class="text-xs uppercase font-bold text-gray-400 mb-1">Total pendiente de abonar</p>
                                 <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-black text-gray-900 dark:text-white">
+                                    <span class="text-4xl font-black text-black dark:text-white">
                                         {{ reserva.total == 0 ? 'Gratis' : reserva.total + '€' }}
                                     </span>
                                 </div>
@@ -128,6 +128,9 @@
                 </template>
             </Card>
         </div>
+
+        <!-- Renderizo el componente de dialogo de confirmacion necesario para el borrado -->
+        <ConfirmDialog></ConfirmDialog>
     </div>
 </template>
 
