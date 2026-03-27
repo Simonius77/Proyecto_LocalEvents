@@ -58,16 +58,24 @@ const items = computed(() => {
     // Saco los datos del usuario que esta conectado
     const user = authStore().user;
 
-    // Si yo veo que el usuario es administrador, le añado el acceso al panel central
-    if (user?.roles?.some(role => role.name.includes('admin'))) {
+    // Si el usuario es administrador u organizador, le añado el acceso al panel correspondiente
+    if (user?.roles?.some(role => role.name.toLowerCase().includes('admin') || role.name.toLowerCase().includes('organizador'))) {
+        const isAdmin = user.roles.some(role => role.name.toLowerCase().includes('admin'));
+        const isOrganizador = user.roles.some(role => role.name.toLowerCase().includes('organizador'));
+
         list.push({
             label: 'Administracion',
             items: [
-                {
-                    label: 'Panel Control',
+                ...(isAdmin ? [{
+                    label: 'Panel Admin',
                     icon: 'pi pi-cog',
                     route: '/admin'
-                }
+                }] : []),
+                ...(isOrganizador ? [{
+                    label: 'Panel Organizador',
+                    icon: 'pi pi-calendar',
+                    route: '/organizador'
+                }] : [])
             ]
         });
     }

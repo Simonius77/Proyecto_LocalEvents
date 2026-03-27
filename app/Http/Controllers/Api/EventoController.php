@@ -27,7 +27,10 @@ class EventoController extends Controller
 
         // Busco los eventos segun lo que el usuario escriba en el buscador
         $eventos = Evento::
-            when(request('search_id'), function ($query) {
+            when(request('id_organizador'), function ($query) {
+                $query->where('id_organizador', request('id_organizador'));
+            })
+            ->when(request('search_id'), function ($query) {
                 $query->where('id_evento', request('search_id'));
             })
             ->when(request('search_global'), function ($query) {
@@ -69,6 +72,14 @@ class EventoController extends Controller
     // Pongo al dia los datos de un evento cuando alguien los cambia
     public function update(evento $evento, UpdateEventoRequest $request)
     {
+        $currentUserId = \Illuminate\Support\Facades\Auth::id();
+        $user = \Illuminate\Support\Facades\Auth::user();
+        
+        $userRole = $user->rol;
+        if ($userRole !== 'admin' && $userRole !== 'administrador' && $currentUserId !== $evento->id_organizador) {
+            return response()->json(['message' => 'No puedes editar un evento que no es tuyo'], 403);
+        }
+
         // Actualizo el texto del evento
         $evento->update($request->validated());
 

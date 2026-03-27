@@ -17,6 +17,7 @@ class Evento extends Model implements HasMedia
     protected $fillable = [
         'nombre',
         'descripcion',
+        'localizacion',
         'latitud',
         'longitud',
         'precio',

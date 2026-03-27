@@ -47,6 +47,7 @@ class UpdateEventoRequest extends FormRequest
         return [
             'nombre' => 'sometimes|required|string|max:255',
             'descripcion' => 'nullable|string',
+            'localizacion' => 'sometimes|required|string|max:255',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
             'precio' => 'sometimes|required|numeric|min:0',

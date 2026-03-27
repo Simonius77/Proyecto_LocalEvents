@@ -24,6 +24,7 @@ class StoreEventoRequest extends FormRequest
         return [
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
+            'localizacion' => 'required|string|max:255',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
             'precio' => 'required|numeric|min:0',

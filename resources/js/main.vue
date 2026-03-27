@@ -9,5 +9,6 @@
 
 <template>
     <Toast position="bottom-right" />
+    <ConfirmDialog />
     <router-view />
 </template>

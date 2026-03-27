@@ -11,6 +11,11 @@
                     <i class="pi pi-bars text-lg"></i>
                 </button>
 
+                <!-- Logo Mobile -->
+                <router-link to="/" class="flex lg:hidden items-center">
+                    <img src="/images/Logo_vector.svg" alt="Logo" class="h-8 w-auto"/>
+                </router-link>
+
                 <!-- Toggle Button - Desktop (para colapsar/expandir) -->
                 <button 
                     @click="emit('toggleCollapse')" 

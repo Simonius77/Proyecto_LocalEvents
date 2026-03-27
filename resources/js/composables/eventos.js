@@ -6,7 +6,7 @@ import { useValidation } from './useValidation'
 
 export default function useEventos() {
     const eventos = ref([])
-    const initialEvento = { id_evento: null, nombre: '', descripcion: '', fecha_inicio: '', fecha_fin: '', aforo: '', precio: '', imagen: null, id_categoria: null }
+    const initialEvento = { id_evento: null, nombre: '', descripcion: '', localizacion: '', latitud: '', longitud: '', fecha_inicio: '', fecha_fin: '', aforo: '', precio: '', imagen: null, id_categoria: '' }
     const evento = ref({ ...initialEvento })
     const isLoading = ref(false)
     const toast = useToast()
@@ -27,6 +27,7 @@ export default function useEventos() {
             .required('El nombre es obligatorio')
             .min(3, 'Debe tener al menos 3 caracteres'),
         descripcion: yup.string().required('Descripción requerida'),
+        localizacion: yup.string().required('Localización requerida'),
         fecha_inicio: yup.string().required('Fecha de inicio requerida'),
         fecha_fin: yup.string().required('Fecha de fin requerida'),
         id_categoria: yup.number().nullable()
@@ -52,11 +53,14 @@ export default function useEventos() {
             id_evento: data.id_evento ?? null,
             nombre: data.nombre ?? '',
             descripcion: data.descripcion ?? '',
+            localizacion: data.localizacion ?? '',
+            latitud: data.latitud ?? null,
+            longitud: data.longitud ?? null,
             fecha_inicio: data.fecha_inicio ? data.fecha_inicio.substring(0, 16) : '',
             fecha_fin: data.fecha_fin ? data.fecha_fin.substring(0, 16) : '',
             aforo: data.aforo ?? '',
             precio: data.precio ?? '',
-            id_categoria: data.id_categoria ?? null,
+            id_categoria: data.id_categoria ?? '',
             imagen: null
         }
         clearErrors()
@@ -89,11 +93,14 @@ export default function useEventos() {
     const serializeFormData = (data) => {
         const form = new FormData()
         Object.entries(data).forEach(([key, value]) => {
-            if (value === undefined || value === null) return
-            if (Array.isArray(value)) {
-                value.forEach(item => form.append(`${key}[]`, item))
+            if (value === undefined) return
+            // No skip null to ensure required fields are sent even if empty
+            const valueToSend = value === null ? '' : value
+            
+            if (Array.isArray(valueToSend)) {
+                valueToSend.forEach(item => form.append(`${key}[]`, item))
             } else {
-                form.append(key, value)
+                form.append(key, valueToSend)
             }
         })
         return form

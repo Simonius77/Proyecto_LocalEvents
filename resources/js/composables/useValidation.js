@@ -68,6 +68,22 @@ export function useValidation() {
   const getError = (field) => field.includes('.') ? errors.value[field.split('.')[0]]?.[field.split('.')[1]] : errors.value[field]
   const hasErrors = () => Object.keys(errors.value).length > 0
 
+  const handleRequestError = (error, options = {}) => {
+    const { 
+      fallbackMessage = 'Ha ocurrido un error', 
+      onValidationError = null, 
+      onGenericError = null 
+    } = options
+
+    if (error.response?.status === 422) {
+      mapValidationErrors(error.response.data)
+      if (onValidationError) onValidationError(error.response.data)
+    } else {
+      const message = error.response?.data?.message || fallbackMessage
+      if (onGenericError) onGenericError(message)
+    }
+  }
+
   return {
     errors,
     validate,
@@ -75,6 +91,7 @@ export function useValidation() {
     setFieldError,
     clearFieldError,
     clearErrors,
+    handleRequestError,
     hasError,
     getError,
     hasErrors
