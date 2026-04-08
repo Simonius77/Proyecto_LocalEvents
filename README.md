@@ -105,6 +105,30 @@ npm run dev
 
 Accede a la aplicación en: `http://localhost:8000`
 
+## 🔄 Sincronización de Base de Datos (Equipo)
+
+Para que todos los miembros del equipo tengan siempre los mismos datos y estructura, hemos implementado un flujo de trabajo con Seeders:
+
+### Para subir tus cambios (Simon):
+1. Si has añadido nuevos eventos o datos localmente y quieres que Manel los vea:
+   ```bash
+   composer db-export
+   ```
+2. Esto actualizará los archivos en `database/seeders/`.
+3. Sube (push) estos cambios a GitHub.
+
+### Para recibir cambios (Manel):
+1. Asegúrate de tener la base de datos local arrancada.
+2. Descarga los cambios (pull).
+3. Ejecuta el comando para actualizar tu base de datos:
+   ```bash
+   composer db-import
+   ```
+   **Nota:** Esto borrará tus datos locales actuales para reemplazarlos con los compartidos.
+
+> [!CAUTION]
+> **Imágenes**: La base de datos sincroniza las referencias a las fotos, pero no los archivos físicos. Si subes una imagen nueva, Manel también necesitará los archivos de la carpeta `storage/app/public`.
+
 ## 📂 Estructura del Proyecto
 
 ### Backend (`app/`)

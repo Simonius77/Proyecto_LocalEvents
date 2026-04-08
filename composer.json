@@ -48,6 +48,12 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "db-export": [
+            "@php artisan iseed categorias,eventos,usuarios,roles,permissions,model_has_roles,model_has_permissions,role_has_permissions,reservas,pagos --force"
+        ],
+        "db-import": [
+            "@php artisan migrate:fresh --seed"
         ]
     },
     "extra": {
