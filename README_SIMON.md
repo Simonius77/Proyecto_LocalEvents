@@ -21,9 +21,29 @@ php artisan serve
 Arrancar servidor
 npm run dev
 
-Crear base de datos
+CREAR BASE DE DATOS
 php artisan migrate:fresh --seed
 Nota con el --seed se cargan los seeders creados por defecto
+
+RELACIONES N-M
+ Relaciones Muchos a Muchos (N:M)
+Estas relaciones utilizan una tabla intermedia (pivote) para conectar dos entidades. Actualmente tienes 4:
+
+Usuarios ↔ Roles :
+
+Permite que un usuario tenga múltiples roles (ej: Admin y Organizador) y que un rol sea compartido por miles de usuarios.
+
+Roles ↔ Permisos:
+Define qué capacidades tiene cada rol.
+Un rol agrupa muchos permisos, y un permiso (ej: crear-evento) puede estar presente en varios roles.
+Usuarios ↔ Permisos:
+Permite asignar permisos "especiales" directamente a un usuario sin necesidad de crear un nuevo rol.
+Usuarios ↔ Eventos (reservas):
+Es una relación N:M con modelo intermedio.
+Un Usuario puede reservar muchos Eventos.
+Un Evento puede ser reservado por muchos Usuarios.
+La tabla reservas actúa como pivote pero guarda información adicional (cantidad de entradas, precio total gastado, estado del pago).
+
 
 RAMA MIGRATIONS
 Migrations modificados para que coincidan con los modelos
