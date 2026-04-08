@@ -1,34 +1,38 @@
 <template>
-    <footer class="bg-surface-50 dark:bg-surface-900 border-t border-surface-200 dark:border-surface-800 py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex flex-col items-center md:items-start">
-                    <router-link to="/" class="flex items-center gap-2 mb-2">
-                        <img src="/images/logo.png" alt="Logo" class="h-8 w-auto" onerror="this.style.display='none'" />
-                        <span class="text-xl font-bold text-primary">LocalEvents</span>
+    <footer class="footer">
+        <div class="footer-overlay">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <router-link to="/" class="footer-logo-link">
+                        <img
+                            src="/images/logo.png"
+                            alt="LocalEvents"
+                            class="footer-logo"
+                            onerror="this.style.display='none'"
+                        />
+                        <span class="footer-logo-text">LocalEvents</span>
                     </router-link>
-                    <p class="text-surface-500 text-sm">copyright 2026</p>
+
+                    <p class="footer-claim">Explorando experiencias únicas cerca de ti</p>
+
+                    <div class="footer-socials">
+                        <a href="#" aria-label="Facebook" class="social-pill">f</a>
+                        <a href="#" aria-label="Twitter" class="social-pill">t</a>
+                        <a href="#" aria-label="Instagram" class="social-pill">◎</a>
+                        <a href="#" aria-label="YouTube" class="social-pill">▶</a>
+                    </div>
                 </div>
 
-                <div class="flex flex-col items-center md:items-end">
-                    <h3 class="font-bold mb-3 text-surface-700 dark:text-surface-300">policas del sitio web</h3>
-                    <ul class="flex flex-wrap justify-center gap-4 list-none p-0 m-0">
-                        <li>
-                            <router-link to="/legal/aviso-legal" class="text-surface-600 dark:text-surface-400 hover:text-primary transition-colors text-sm">
-                                aviso legal
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link to="/legal/privacidad" class="text-surface-600 dark:text-surface-400 hover:text-primary transition-colors text-sm">
-                                politcas de privacidad
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link to="/legal/cookies" class="text-surface-600 dark:text-surface-400 hover:text-primary transition-colors text-sm">
-                                politicas de cookies
-                            </router-link>
-                        </li>
-                    </ul>
+                <div class="footer-divider"></div>
+
+                <div class="footer-bottom">
+                    <p class="footer-copy">© 2026 LocalEvents. Todos los derechos reservados.</p>
+
+                    <div class="footer-legal">
+                        <router-link to="/legal/aviso-legal">Aviso legal</router-link>
+                        <router-link to="/legal/privacidad">Política de privacidad</router-link>
+                        <router-link to="/legal/cookies">Política de cookies</router-link>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,5 +40,147 @@
 </template>
 
 <script setup>
-// defino este componente para que sea el pie de pagina de todo el sitio
+// Componente footer global del sitio
 </script>
+
+<style scoped>
+.footer {
+    margin-top: auto;
+    background-image: url('/images/footer-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+}
+
+.footer-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(74, 18, 92, 0.45),
+        rgba(32, 8, 49, 0.7)
+    );
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 24px 24px;
+    text-align: center;
+}
+
+.footer-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.footer-logo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.footer-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+}
+
+.footer-logo-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+}
+
+.footer-claim {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.footer-socials {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.social-pill {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.social-pill:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.footer-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.35);
+    margin: 28px 0 20px;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.footer-copy {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.footer-legal {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-legal a {
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: opacity 0.2s ease;
+}
+
+.footer-legal a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer-logo-text {
+        font-size: 1.6rem;
+    }
+
+    .footer-claim {
+        font-size: 1.05rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-legal {
+        gap: 12px;
+    }
+}
+</style>
