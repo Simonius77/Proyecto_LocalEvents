@@ -21,7 +21,7 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <!--<link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">-->
     <script>
-        window.config = @json($config);
+        window.config = <?php echo json_encode($config); ?>;
     </script>
     <!-- Scripts -->
 

@@ -7,13 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+// Soy el modelo que gestiona la informacion de los eventos
 class Evento extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    // Nombre de la tabla en mi base de datos
     protected $table = 'eventos';
+    
+    // Identificador unico del evento
     protected $primaryKey = 'id_evento';
 
+    // Campos que dejo que se guarden de forma automatica
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -30,15 +35,15 @@ class Evento extends Model implements HasMedia
     ];
 
     /**
-     * Obtener la categoría del evento.
+     * Saco la categoria a la que pertenece este evento
      */
     public function categoria()
     {
-        return $this->belongsTo(categoria::class, 'id_categoria', 'id_categoria');
+        return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
     }
 
     /**
-     * Obtener el organizador del evento.
+     * Busco al usuario que ha organizado este evento
      */
     public function organizador()
     {
@@ -46,11 +51,10 @@ class Evento extends Model implements HasMedia
     }
 
     /**
-     * Obtener las reservas del evento.
+     * Traigo todas las reservas que se han hecho para este evento
      */
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'id_evento', 'id_evento');
     }
 }
-

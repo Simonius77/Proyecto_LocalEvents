@@ -1,33 +1,32 @@
 <?php
-//Atencion!!!
-//Ojo con las variables, yo programo en castellano antiguo by Simon.
-/*Los eventos tendran categorias, por lo que se crea esta tabla para relacionarlos*/
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class categoria extends Model
+// Soy el modelo que representa las categorias de los eventos
+class Categoria extends Model
 {
     use HasFactory;
 
+    // Indico el nombre de la tabla en la base de datos
     protected $table = 'categorias';
+    
+    // Marco id_categoria como la clave primaria de la tabla
     protected $primaryKey = 'id_categoria';
 
+    // Permito el llenado masivo de estos campos
     protected $fillable = [
         'nombre',
     ];
 
     /**
-     * Obtener los eventos de la categoría.
+     * Traigo todos los eventos que pertenecen a esta categoria
      */
     public function eventos()
     {
-        return $this->hasMany(evento::class, 'id_categoria', 'id_categoria');
+        return $this->hasMany(Evento::class, 'id_categoria', 'id_categoria');
     }
 }
-/*por que en este archivo no se cierra el php?
-Es una excelente pregunta técnica. En PHP moderno (y especialmente en Laravel), 
-es una buena práctica recomendada NO cerrar la etiqueta ?> 
-al final de los archivos que contienen solo código PHP.*/
+// He quitado el cierre de PHP para seguir las buenas practicas de Laravel
