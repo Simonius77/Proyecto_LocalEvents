@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
         $this->call(CategoriesTableSeeder::class);
         
         // Seeders dinámicos (solo se ejecutan si existen los archivos)
-        if (class_exists(EventosTableSeeder::class)) $this->call(EventosTableSeeder::class);
-        if (class_exists(ReservasTableSeeder::class)) $this->call(ReservasTableSeeder::class);
-        if (class_exists(PagosTableSeeder::class)) $this->call(PagosTableSeeder::class);
+        if (file_exists(__DIR__ . '/EventosTableSeeder.php')) $this->call(EventosTableSeeder::class);
+        if (file_exists(__DIR__ . '/ReservasTableSeeder.php')) $this->call(ReservasTableSeeder::class);
+        if (file_exists(__DIR__ . '/PagosTableSeeder.php')) $this->call(PagosTableSeeder::class);
 
         $this->call(MediaTableSeeder::class);
         
