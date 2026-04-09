@@ -1,23 +1,5 @@
 <template>
   <div class="home-page">
-    <!-- HEADER -->
-    <header class="home-header">
-      <div class="container header-inner">
-        <a href="/" class="logo-wrap">
-          <img src="/images/home/logo-localevents.png" alt="LocalEvents" class="logo" />
-        </a>
-
-        <nav class="main-nav">
-          <a href="/eventos">Eventos</a>
-          <a href="/buscar-eventos">Buscar eventos</a>
-        </nav>
-
-        <div class="header-actions">
-          <a href="/login" class="btn btn-primary">Iniciar sesión</a>
-          <a href="/register" class="btn btn-secondary">Registrarse</a>
-        </div>
-      </div>
-    </header>
 
     <!-- HERO -->
     <section class="hero">
