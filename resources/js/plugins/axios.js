@@ -11,7 +11,7 @@ window.axios = axios;
 
 // URL base de la API. Forzamos el uso de 127.0.0.1 para evitar errores de red en Windows
 // derivados de la resolucion de 'localhost' (que a veces intenta usar IPv6 ::1).
-window.axios.defaults.baseURL = 'http://127.0.0.1:8000';
+window.axios.defaults.baseURL = 'http://localhost:8000';
 
 // Identifica las peticiones como AJAX y pide respuesta en JSON.
 // Esto es CRITICO para que el servidor no intente redireccionarte y falle la conexion.

@@ -14,30 +14,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UsersTableSeeder::class);
-        $this->call(CategoriesTableSeeder::class);
+        // Limpiar caché de roles y permisos antes de empezar
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // 1. Catálogos básicos y Usuarios
+        $this->call(CategoriasTableSeeder::class);
+        $this->call(UsuariosTableSeeder::class);
         
-        // Seeders dinámicos (solo se ejecutan si existen los archivos)
+        // 2. Eventos y derivados
         if (file_exists(__DIR__ . '/EventosTableSeeder.php')) $this->call(EventosTableSeeder::class);
         if (file_exists(__DIR__ . '/ReservasTableSeeder.php')) $this->call(ReservasTableSeeder::class);
         if (file_exists(__DIR__ . '/PagosTableSeeder.php')) $this->call(PagosTableSeeder::class);
 
         $this->call(MediaTableSeeder::class);
         
+        // 3. Roles y configuración de permisos
         $this->call(RolesTableSeeder::class);
         $this->call(PermissionsTableSeeder::class);
         $this->call(RoleHasPermissionsTableSeeder::class);
         $this->call(ModelHasRolesTableSeeder::class);
         $this->call(ModelHasPermissionsTableSeeder::class);
-
-/*
- php artisan iseed categories,category_exercise,category_post,cfs,check_exercises,course_users,courses,exercise_comments,exercises,group_users,groups,media,model_has_permissions,model_has_roles,mps,permissions,posts,qualifications,ras,role_has_permissions,roles,sub_type_exercises,task_exercises,task_users,tasks,type_checks,type_exercises,type_tasks --exclude=created_at,updated_at --force
-
-attempts, userts
-
-*/
-
-        $this->call(CategoriasTableSeeder::class);
-        $this->call(UsuariosTableSeeder::class);
     }
 }

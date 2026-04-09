@@ -20,7 +20,7 @@ class EventoResource extends JsonResource
             'localizacion' => $this->localizacion,
             'latitud' => $this->latitud,
             'longitud' => $this->longitud,
-            'imagen' => $this->getFirstMediaUrl('imagenes_eventos'),
+            'imagen' => $this->getFirstMediaUrl('imagenes_eventos') ?: '/images/eventomuestra.webp',
             'categoria' => $this->whenLoaded('categoria'),
             'organizador' => $this->whenLoaded('organizador'),
         ];
