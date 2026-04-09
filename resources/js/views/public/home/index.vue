@@ -84,7 +84,6 @@
             <div class="category-icon-wrap">
               <img :src="category.icon" :alt="category.name" class="category-icon" />
             </div>
-            <h3>{{ category.name }}</h3>
           </article>
         </div>
 
@@ -107,7 +106,7 @@ const popularEvents = [
     title: 'Concierto tributo\na queen',
     location: 'Sala Riviera, Madrid',
     price: '25€',
-    image: '/images/home/events/queen.jpg',
+    image: '/images/Queen.png',
     url: '/eventos/concierto-tributo-a-queen',
   },
   {
@@ -115,7 +114,7 @@ const popularEvents = [
     title: 'Cena a ciegas',
     location: 'C/ Desengaño 21, Barcelona',
     price: '25€',
-    image: '/images/home/events/cena-a-ciegas.jpg',
+    image: '/images/Cena_a_Ciegas.png',
     url: '/eventos/cena-a-ciegas',
   },
   {
@@ -123,7 +122,7 @@ const popularEvents = [
     title: 'Musical Anastasia',
     location: 'Gran Vía 78, Madrid',
     price: '45€',
-    image: '/images/home/events/anastasia.jpg',
+    image: '/images/Anastasia.png',
     url: '/eventos/musical-anastasia',
   },
 ]
@@ -132,22 +131,22 @@ const categories = [
   {
     id: 1,
     name: 'Conciertos',
-    icon: '/images/home/categories/conciertos.png',
+    icon: '/images/conciertos.png',
   },
   {
     id: 2,
     name: 'Teatro',
-    icon: '/images/home/categories/teatro.png',
+    icon: '/images/teatro.png',
   },
   {
     id: 3,
     name: 'Gastronomía',
-    icon: '/images/home/categories/gastronomia.png',
+    icon: '/images/gastronomia.png',
   },
   {
     id: 4,
     name: 'Exposiciones',
-    icon: '/images/home/categories/exposiciones.png',
+    icon: '/images/exposiciones.png',
   },
 ]
 
@@ -287,7 +286,7 @@ const searchEvents = () => {
 /* HERO */
 .hero {
   min-height: 560px;
-  background-image: url('/images/home/hero-bg.jpg');
+  background-image: url('/images/Foto_banner.png');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -409,7 +408,7 @@ const searchEvents = () => {
 .event-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -470,22 +469,16 @@ const searchEvents = () => {
 .category-icon-wrap {
   background: #f4f4f4;
   border-radius: 6px;
-  padding: 22px;
+  padding: 0;
   margin-bottom: 14px;
+  aspect-ratio: 1;
+  overflow: hidden;
 }
 
 .category-icon {
   width: 100%;
-  max-width: 150px;
-  height: auto;
-  object-fit: contain;
-}
-
-.category-card h3 {
-  margin: 0;
-  color: var(--primary-blue);
-  font-size: 1.9rem;
-  font-weight: 900;
+  height: 100%;
+  object-fit: cover;
 }
 
 .categories-cta {
