@@ -63,7 +63,7 @@
               <p class="location">{{ event.location }}</p>
               <p class="price">Desde {{ event.price }}</p>
 
-              <a :href="event.url" class="btn btn-card">Reservar</a>
+              <Button :href="event.url" label="Reservar" severity="primary" class="btn-reservar" />
             </div>
           </article>
         </div>
@@ -88,7 +88,7 @@
         </div>
 
         <div class="categories-cta">
-          <a href="/categorias" class="btn btn-wide">Ver todas las categorías</a>
+          <Button href="/categorias" label="Ver todas las categorías" severity="primary" class="btn-reservar" />
         </div>
       </div>
     </section>
@@ -97,13 +97,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import Button from 'primevue/button'
 
 const search = ref('')
 
 const popularEvents = [
   {
     id: 1,
-    title: 'Concierto tributo\na queen',
+    title: 'Tributo a queen',
     location: 'Sala Riviera, Madrid',
     price: '25€',
     image: '/images/Queen.png',
@@ -222,7 +223,7 @@ const searchEvents = () => {
 }
 
 .logo {
-  height: 48px;
+  height: 150px;
   width: auto;
   object-fit: contain;
 }
@@ -396,6 +397,8 @@ const searchEvents = () => {
 
 .event-card {
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
 }
 
 .event-image-wrap {
@@ -413,7 +416,9 @@ const searchEvents = () => {
 }
 
 .event-body {
-  padding: 12px 8px 0;
+  padding: 12px 0 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .event-body h3 {
@@ -438,14 +443,14 @@ const searchEvents = () => {
   color: #222222;
 }
 
-.btn-card {
-  background: var(--primary-green);
-  color: #ffffff;
-  min-width: 180px;
-  padding: 12px 28px;
-  border-radius: 14px;
+:deep(.btn-reservar) {
   font-size: 1.25rem;
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
+  font-weight: 700;
+  padding: 12px 32px !important;
+}
+
+:deep(.btn-reservar .p-button-label) {
+  font-weight: 700;
 }
 
 /* CATEGORIES */
