@@ -62,7 +62,7 @@ class User extends Authenticatable implements HasMedia
     }
 
     // Cambio el tamaño de las fotos si hace falta para que no pesen tanto
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         if (env('RESIZE_IMAGE') === true) {
             $this->addMediaConversion('resized-image')
@@ -74,12 +74,12 @@ class User extends Authenticatable implements HasMedia
     // Conecto al usuario con los eventos que el mismo organiza
     public function eventos()
     {
-        return $this->hasMany(evento::class, 'id_organizador', 'id_usuario');
+        return $this->hasMany(Evento::class, 'id_organizador', 'id_usuario');
     }
 
     // Conecto al usuario con todas las reservas que ha hecho
     public function reservas()
     {
-        return $this->hasMany(reserva::class, 'id_usuario', 'id_usuario');
+        return $this->hasMany(Reserva::class, 'id_usuario', 'id_usuario');
     }
 }

@@ -6,28 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEventoRequest;
 use App\Http\Requests\UpdateEventoRequest;
 use App\Http\Resources\EventoResource;
-use App\Models\evento;
+use App\Models\Evento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-// Uso este controlador para que se puedan manejar los eventos desde fuera
+// Mi funcion es gestionar todas las peticiones sobre eventos que llegan a la API
 class EventoController extends Controller
 {
-    // Listo los eventos y permito que se busquen por nombre o id
+    /**
+     * Devuelvo la lista de eventos filtrada y paginada para que se vea en el sistema
+     */
     public function index()
     {
-        // Elijo como ordenar la lista, por defecto por fecha de creacion
+        // Elijo como organizar los eventos segun lo que me pidan, por defecto por fecha
         $orderColumn = request('order_column', 'created_at');
         if (!in_array($orderColumn, ['id_evento', 'nombre', 'created_at'])) {
             $orderColumn = 'created_at';
         }
+
         $orderDirection = request('order_direction', 'desc');
         if (!in_array($orderDirection, ['asc', 'desc'])) {
             $orderDirection = 'desc';
         }
 
-        // Busco los eventos segun lo que el usuario escriba en el buscador
-        $eventos = Evento::
-            when(request('id_organizador'), function ($query) {
+        // Busco los eventos aplicando los filtros que el usuario haya escrito
+        $eventos = Evento::when(request('id_organizador'), function ($query) {
                 $query->where('id_organizador', request('id_organizador'));
             })
             ->when(request('search_id'), function ($query) {
@@ -45,17 +48,19 @@ class EventoController extends Controller
         return EventoResource::collection($eventos);
     }
 
-    // Guardo un evento nuevo y tambien me encargo de guardar la foto si hay
+    /**
+     * Guardo un evento nuevo en la base de datos y le asigno el organizador
+     */
     public function store(StoreEventoRequest $request)
     {
-        // Anoto quien es el que crea el evento usando su id de usuario
+        // Saco los datos limpios y le pongo quien es el jefe (el usuario logueado)
         $validatedData = $request->validated();
-        $validatedData['id_organizador'] = \Illuminate\Support\Facades\Auth::id();
+        $validatedData['id_organizador'] = Auth::id();
 
-        // Creo el registro en la base de datos
-        $evento = evento::create($validatedData);
+        // Creo el evento con los datos que me han pasado
+        $evento = Evento::create($validatedData);
 
-        // Si me mandan una imagen, yo la guardo en la carpeta de imagenes
+        // Si me han mandado una foto, yo la guardo donde toca
         if ($request->hasFile('imagen')) {
             $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
         }
@@ -63,27 +68,32 @@ class EventoController extends Controller
         return new EventoResource($evento);
     }
 
-    // Enseño los datos de un solo evento
-    public function show(evento $evento)
+    /**
+     * Enseño los datos de un evento concreto
+     */
+    public function show(Evento $evento)
     {
         return new EventoResource($evento);
     }
 
-    // Pongo al dia los datos de un evento cuando alguien los cambia
-    public function update(evento $evento, UpdateEventoRequest $request)
+    /**
+     * Actualizo los datos de un evento si el usuario tiene permiso para hacerlo
+     */
+    public function update(Evento $evento, UpdateEventoRequest $request)
     {
-        $currentUserId = \Illuminate\Support\Facades\Auth::id();
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $user = Auth::user();
         
-        $userRole = $user->rol;
-        if ($userRole !== 'admin' && $userRole !== 'administrador' && $currentUserId !== $evento->id_organizador) {
-            return response()->json(['message' => 'No puedes editar un evento que no es tuyo'], 403);
+        // Miro si es el admin o el dueño del evento para dejarle editar
+        $isAuthorized = in_array($user->rol, ['admin', 'administrador']) || $user->id_usuario === $evento->id_organizador;
+        
+        if (!$isAuthorized) {
+            return response()->json(['message' => 'No tienes permiso para editar este evento'], 403);
         }
 
-        // Actualizo el texto del evento
+        // Guardo los cambios en el texto
         $evento->update($request->validated());
 
-        // Si me pasan una foto nueva, yo borro la vieja y pongo la de ahora
+        // Si hay una foto nueva, borro la vieja y pongo la de ahora
         if ($request->hasFile('imagen')) {
             $evento->media()->delete();
             $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
@@ -92,30 +102,29 @@ class EventoController extends Controller
         return new EventoResource($evento);
     }
 
-    // Borro el evento si el usuario tiene permiso para hacerlo
-    public function destroy(evento $evento)
+    /**
+     * Borro un evento del sistema si se tiene el permiso adecuado
+     */
+    public function destroy(Evento $evento)
     {
-        $currentUserId = \Illuminate\Support\Facades\Auth::id();
-        $userRole = \Illuminate\Support\Facades\Auth::user()->rol;
+        $user = Auth::user();
 
-        // Si soy el jefe (admin), yo puedo borrar cualquier cosa
-        if ($userRole === 'admin' || $userRole === 'administrador') {
-            $evento->delete();
-            return response()->noContent();
-        }
+        // Solo el admin o el que creo el evento pueden borrarlo
+        $isAuthorized = in_array($user->rol, ['admin', 'administrador']) || $user->id_usuario === $evento->id_organizador;
 
-        // Si no soy el dueno del evento, yo no dejo que se borre
-        if ($currentUserId !== $evento->id_organizador) {
-            return response()->json(['message' => 'No puedes borrar un evento que no es tuyo'], 403);
+        if (!$isAuthorized) {
+            return response()->json(['message' => 'No tienes permiso para borrar este evento'], 403);
         }
 
         $evento->delete();
         return response()->noContent();
     }
 
-    // Traigo todos los eventos de golpe para la pagina principal
+    /**
+     * Traigo todos los eventos sin filtros para usarlos rapido en otras partes
+     */
     public function getList()
     {
-        return EventoResource::collection(evento::all());
+        return EventoResource::collection(Evento::all());
     }
 }

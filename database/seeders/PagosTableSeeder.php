@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class ModelHasPermissionsTableSeeder extends Seeder
+class PagosTableSeeder extends Seeder
 {
 
     /**
@@ -16,7 +16,7 @@ class ModelHasPermissionsTableSeeder extends Seeder
     {
         
 
-        \DB::table('model_has_permissions')->delete();
+        \DB::table('pagos')->delete();
         
         
         

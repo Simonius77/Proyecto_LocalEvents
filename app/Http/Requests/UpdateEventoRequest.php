@@ -16,7 +16,7 @@ class UpdateEventoRequest extends FormRequest
         
         // Si lo que llega es solo el ID (un numero), lo buscamos en la base de datos
         if (is_numeric($evento)) {
-            $evento = \App\Models\evento::find($evento);
+            $evento = \App\Models\Evento::find($evento);
         }
 
         // Si no encontramos el evento, no dejamos pasar

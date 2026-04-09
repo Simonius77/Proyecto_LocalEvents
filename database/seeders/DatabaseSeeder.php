@@ -37,5 +37,7 @@ attempts, userts
 
 */
 
+        $this->call(CategoriasTableSeeder::class);
+        $this->call(UsuariosTableSeeder::class);
     }
 }
