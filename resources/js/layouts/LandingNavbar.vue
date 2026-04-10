@@ -39,8 +39,8 @@
                     </button>
 
                     <template v-if="!auth.authenticated">
-                        <Button @click="() => { console.log('Login clicked'); router.push({ name: 'public.login' }); }" label="Login" text size="small" />
-                        <Button @click="() => { console.log('Register clicked'); router.push({ name: 'public.register' }); }" label="Registro" severity="primary" size="small" />
+                        <Button @click="() => { console.log('Login clicked'); router.push({ name: 'public.login' }); }" label="Iniciar sesión" text size="small" />
+                        <Button @click="() => { console.log('Register clicked'); router.push({ name: 'public.register' }); }" label="Registrarse" severity="primary" size="small" />
                     </template>
 
                     <div v-else>
@@ -281,4 +281,3 @@ onBeforeMount(() => {
     setDefaultMode()
 })
 </script>
-
