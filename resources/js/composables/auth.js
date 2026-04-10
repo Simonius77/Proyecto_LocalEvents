@@ -95,8 +95,18 @@ export default function useAuth() {
                 showConfirmButton: false,
                 timer: 1500
             })
-            // Redirigimos a la página de inicio
-            await router.push({ name: 'public.home' })
+            // Redirigimos al panel correspondiente segun el rol del usuario
+            // Redirigimos al panel correspondiente segun el rol del usuario de forma robusta
+            const roles = auth.user?.roles || []
+            const rolString = auth.user?.rol || ''
+
+            if (roles.some(r => r.name?.toLowerCase().includes('admin')) || rolString === 'administrador') {
+                await router.push({ name: 'admin.index' });
+            } else if (roles.some(r => r.name?.toLowerCase().includes('organizador')) || rolString === 'organizador') {
+                await router.push({ name: 'organizador.index' });
+            } else {
+                await router.push({ name: 'app.dashboard' });
+            }
         } catch (error) {
             // Manejo de errores protegidos
             if (error.response?.data) {

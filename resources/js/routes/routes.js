@@ -60,7 +60,8 @@ async function requireOrganizador(to, from, next) {
     let user = auth.user;
 
     if (isLogin) {
-        if (user.roles.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador') || (r.nombre || r.name || '').toLowerCase().includes('admin'))) {
+        if (user.roles?.some(r => (r.nombre || r.name || '').toLowerCase().includes('organizador') || (r.nombre || r.name || '').toLowerCase().includes('admin')) || 
+            user.rol === 'administrador' || user.rol === 'organizador') {
             next()
         } else {
             next('/app')
@@ -151,6 +152,15 @@ export default [
         beforeEnter: requireLogin,
         meta: { breadCrumb: '.' },
         children: [
+            {
+                name: 'app.dashboard',
+                path: '',
+                component: () => import('../views/user/Dashboard.vue'),
+                meta: {
+                    breadCrumb: 'Dashboard',
+                    hideBreadcrumb: true
+                },
+            },
             {
                 name: 'app.profile',
                 path: 'profile',

@@ -19,16 +19,25 @@
 
         <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="md:col-span-2 flex flex-col gap-4">
-                <Card v-for="item in carrito" :key="item.id_reserva" class="overflow-hidden border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm">
+                <Card v-for="item in carrito" :key="item.id_reserva" class="overflow-hidden border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
                     <template #content>
                         <div class="flex items-center justify-between p-2">
-                            <div>
-                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ item.evento?.nombre }}</h3>
-                                <p class="text-sm text-gray-500 mt-1">{{ item.cantidad }} {{ item.cantidad > 1 ? 'entradas' : 'entrada' }}</p>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{ item.evento?.nombre }}</h3>
+                                <div class="flex items-center gap-2 text-sm text-gray-500">
+                                    <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md font-medium text-gray-700 dark:text-gray-300">
+                                        {{ item.evento?.precio }}€ cada una
+                                    </span>
+                                    <span>x</span>
+                                    <span class="font-bold text-gray-900 dark:text-white">{{ item.cantidad }} {{ item.cantidad > 1 ? 'entradas' : 'entrada' }}</span>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-4">
-                                <span class="text-2xl font-black text-gray-900 dark:text-white">{{ item.total }}€</span>
-                                <Button icon="pi pi-trash" severity="danger" text rounded aria-label="Eliminar" @click="eliminarDelCarrito(item.id_reserva)" />
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <p class="text-[10px] uppercase font-bold text-gray-400">Subtotal</p>
+                                    <span class="text-2xl font-black text-gray-900 dark:text-white">{{ item.total }}€</span>
+                                </div>
+                                <Button icon="pi pi-trash" severity="danger" text rounded aria-label="Eliminar" @click="eliminarDelCarrito(item.id_reserva)" class="hover:bg-red-50 dark:hover:bg-red-900/10" />
                             </div>
                         </div>
                     </template>
@@ -36,18 +45,35 @@
             </div>
 
             <div class="md:col-span-1">
-                <Card class="border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm sticky top-6">
+                <Card class="border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm sticky top-6 bg-gray-50/30 dark:bg-gray-800/20">
                     <template #content>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Detalles del Pedido</h3>
-                        <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-4 mb-6">
-                            <span class="text-gray-500 font-medium">Total a pagar</span>
-                            <span class="text-3xl font-black text-gray-900 dark:text-white">{{ totalCarrito }}€</span>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Resumen del Pedido</h3>
+                        
+                         <div class="flex flex-col gap-3 mb-6">
+                            <div class="flex justify-between items-center text-sm font-medium">
+                                <span class="text-gray-500">Base Imponible</span>
+                                <span class="text-gray-900 dark:text-white">{{ baseImponible }}€</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm font-medium">
+                                <span class="text-gray-500">Impuestos (IVA 21%)</span>
+                                <span class="text-gray-900 dark:text-white">{{ impuestos }}€</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm font-medium">
+                                <span class="text-gray-500">Descuentos</span>
+                                <span class="text-green-500">-0,00€</span>
+                            </div>
                         </div>
+
+                        <div class="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-5 mb-8">
+                            <span class="text-lg font-bold text-gray-900 dark:text-white">Total Final</span>
+                            <span class="text-3xl font-black text-blue-600 dark:text-blue-400">{{ totalCarrito }}€</span>
+                        </div>
+
                         <Button 
-                            label="Comprar Entradas" 
+                            label="Pagar Ahora" 
                             icon="pi pi-credit-card" 
                             severity="success" 
-                            class="w-full rounded-xl py-4 font-bold text-lg shadow-lg shadow-green-500/20"
+                            class="w-full rounded-xl py-4 font-bold text-lg shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02]"
                             :loading="isProcesando"
                             @click="procesarPago"
                         />
@@ -70,7 +96,14 @@ const router = useRouter();
 const toast = useToast();
 
 // Obtengo los metodos y valores del carrito que acabo de importar
-const { carrito, totalCarrito, eliminarDelCarrito, limpiarCarrito } = useCarrito();
+const { 
+    carrito, 
+    totalCarrito, 
+    baseImponible, 
+    impuestos, 
+    eliminarDelCarrito, 
+    limpiarCarrito 
+} = useCarrito();
 
 // Variable para controlar si el pago esta en proceso y bloquear el boton
 const isProcesando = ref(false);

@@ -15,6 +15,11 @@ const items = computed(() => {
             label: 'Contenido',
             items: [
                 {
+                    label: 'Panel de Usuario',
+                    icon: 'pi pi-home',
+                    route: '/app'
+                },
+                {
                     label: 'Posts',
                     icon: 'pi pi-th-large',
                     route: '/app/posts'
@@ -42,36 +47,39 @@ const items = computed(() => {
             label: 'Cuenta',
             items: [
                 {
-                    label: 'Perfil',
+                    label: 'Mi Perfil',
                     icon: 'pi pi-user',
                     route: '/app/profile'
-                },
-                {
-                    label: 'Eventos',
-                    icon: 'pi pi-calendar',
-                    route: '/app/eventos'
                 }
             ]
         }
     ];
 
-    // Saco los datos del usuario que esta conectado
-    const user = authStore().user;
+    // Saco los datos del usuario que esta conectado de forma segura
+    const user = computed(() => authStore().user);
 
     // Si el usuario es administrador u organizador, le añado el acceso al panel correspondiente
-    if (user?.roles?.some(role => role.name.toLowerCase().includes('admin') || role.name.toLowerCase().includes('organizador'))) {
-        const isAdmin = user.roles.some(role => role.name.toLowerCase().includes('admin'));
-        const isOrganizador = user.roles.some(role => role.name.toLowerCase().includes('organizador'));
+    // Comprobamos tanto el sistema de roles de Spatie como el campo 'rol' de la base de datos
+    const isAdmin = computed(() => {
+        return user.value?.roles?.some(role => role.name?.toLowerCase().includes('admin')) || 
+               user.value?.rol === 'administrador';
+    });
 
+    const isOrganizador = computed(() => {
+        return user.value?.roles?.some(role => role.name?.toLowerCase().includes('organizador')) || 
+               user.value?.rol === 'organizador';
+    });
+
+    if (isAdmin.value || isOrganizador.value) {
         list.push({
             label: 'Administracion',
             items: [
-                ...(isAdmin ? [{
+                ...(isAdmin.value ? [{
                     label: 'Panel Admin',
                     icon: 'pi pi-cog',
                     route: '/admin'
                 }] : []),
-                ...(isOrganizador ? [{
+                ...(isAdmin.value || isOrganizador.value ? [{
                     label: 'Panel Organizador',
                     icon: 'pi pi-calendar',
                     route: '/organizador'
