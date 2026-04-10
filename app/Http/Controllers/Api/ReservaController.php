@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Reserva;
 use App\Models\Evento;
+use App\Models\Pagos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ReservaResource;
@@ -56,7 +57,17 @@ class ReservaController extends Controller
     public function pagar($id)
     {
         $reserva = Reserva::where('id_usuario', Auth::id())->findOrFail($id);
+        
+        // Marcamos la reserva como pagada
         $reserva->update(['estado' => 'pagado']);
+
+        // Creamos el registro del pago para el historico
+        Pagos::create([
+            'id_reserva' => $reserva->id_reserva,
+            'monto' => $reserva->total,
+            'fecha_pago' => now(),
+            'estado' => 'completado'
+        ]);
 
         return new ReservaResource($reserva->load('evento'));
     }
@@ -116,6 +127,31 @@ class ReservaController extends Controller
                 ->latest()
                 ->get()
         );
+    }
+
+    // Permito cambiar la cantidad de personas de una reserva si todavia no se ha pagado
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'cantidad' => 'required|integer|min:1'
+        ]);
+        
+        $reserva = Reserva::with('evento')->where('id_usuario', Auth::id())->findOrFail($id);
+        
+        // Solo dejo cambiar la cantidad si la reserva esta pendiente de pago
+        if ($reserva->estado !== 'pendiente') {
+            return response()->json(['message' => 'No puedes cambiar la cantidad de una reserva ya procesada'], 422);
+        }
+
+        // Recalculo el total en base al precio original del evento
+        $nuevo_total = $reserva->evento->precio * $request->cantidad;
+        
+        $reserva->update([
+            'cantidad' => $request->cantidad,
+            'total' => $nuevo_total
+        ]);
+
+        return new ReservaResource($reserva);
     }
 
     // Confirmo la cancelacion de una reserva para liberar el aforo y marcarla como cancelada oficialmente

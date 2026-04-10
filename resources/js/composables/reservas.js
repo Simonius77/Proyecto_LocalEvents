@@ -67,6 +67,18 @@ export default function useReservas() {
         }
     }
 
+    // Actualizo la cantidad de personas de una reserva
+    const actualizarCantidad = async (id, cantidad) => {
+        try {
+            await axios.put(`/api/reservas/${id}`, { cantidad })
+            // Actualizo la lista local sin recargar todo si es posible, aunque getReservas es mas seguro
+            await getReservas()
+        } catch (error) {
+            toast.error('Error', error.response?.data?.message || 'No se pudo actualizar la cantidad')
+            throw error
+        }
+    }
+
     return {
         reservas,
         isLoading,
@@ -74,6 +86,7 @@ export default function useReservas() {
         crearReserva,
         pagarReserva,
         solicitarCancelacion,
-        eliminarReserva
+        eliminarReserva,
+        actualizarCantidad
     }
 }

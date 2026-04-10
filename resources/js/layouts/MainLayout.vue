@@ -1,6 +1,6 @@
 <template>
     
-    <div >
+    <div>
         <!-- ===== Page Wrapper Start ===== -->
         <div class="flex h-screen overflow-hidden">
             <!-- ===== Sidebar Start ===== -->

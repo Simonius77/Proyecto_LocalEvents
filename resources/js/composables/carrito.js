@@ -34,11 +34,22 @@ export default function useCarrito() {
         return carrito.value.reduce((total, item) => total + Number(item.total || 0), 0);
     });
 
+    // Desglose de impuestos (IVA 21% incluido en el total)
+    const baseImponible = computed(() => {
+        return (totalCarrito.value / 1.21).toFixed(2);
+    });
+
+    const impuestos = computed(() => {
+        return (totalCarrito.value - Number(baseImponible.value)).toFixed(2);
+    });
+
     return {
         carrito,
         agregarAlCarrito,
         eliminarDelCarrito,
         limpiarCarrito,
-        totalCarrito
+        totalCarrito,
+        baseImponible,
+        impuestos
     };
 }

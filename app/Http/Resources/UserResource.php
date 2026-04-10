@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'surname2' => $surname2,
             'apellidos' => $this->apellidos,
             'email' => $this->email,
+            'rol' => $this->rol,
             'roles' => RoleResource::collection($this->roles),
             'avatar' => count($this->getMedia('*')) > 0 ? $this->getMedia('*')[0]->getUrl() : null,
             'created_at' => $this->created_at ? $this->created_at->toDateString() : null

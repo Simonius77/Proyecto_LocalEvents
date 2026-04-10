@@ -36,17 +36,17 @@
 
         <!-- List View -->
         <div v-else class="grid grid-cols-1 gap-6">
-            <Card v-for="reserva in reservasActivas" :key="reserva.id_reserva" class="overflow-hidden border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+            <Card v-for="reserva in reservasActivas" :key="reserva.id_reserva" class="overflow-hidden border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow group">
                 <template #content>
                     <div class="flex flex-col md:flex-row gap-8 p-1">
                         <!-- Left: Event Basic Info -->
-                        <div class="flex-1">
+                        <div class="flex-1 cursor-pointer" @click="showDetalles(reserva.evento)">
                             <div class="flex items-center justify-between mb-4">
                                 <Tag :value="formatStatus(reserva.estado)" :severity="getStatusSeverity(reserva.estado)" class="px-3 py-1 rounded-lg uppercase text-xs font-bold" />
                                 <span class="text-xs text-gray-400 font-mono">ID: #{{ reserva.id_reserva }}</span>
                             </div>
                             
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 line-clamp-2">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 line-clamp-2 transition-colors group-hover:text-blue-500">
                                 {{ reserva.evento?.nombre }}
                             </h3>
 
@@ -67,7 +67,12 @@
                                     </div>
                                     <div>
                                         <p class="text-[10px] uppercase font-bold text-gray-400">Entradas</p>
-                                        <p class="text-sm font-medium">{{ reserva.cantidad }} {{ reserva.cantidad > 1 ? 'Personas' : 'Persona' }}</p>
+                                        <div class="flex items-center gap-2 mt-1" v-if="reserva.estado === 'pendiente'">
+                                            <Button icon="pi pi-minus" size="small" rounded text class="w-7 h-7" @click.stop="cambiarCantidad(reserva, -1)" :disabled="reserva.cantidad <= 1" />
+                                            <span class="text-sm font-bold min-w-[1.5rem] text-center">{{ reserva.cantidad }}</span>
+                                            <Button icon="pi pi-plus" size="small" rounded text class="w-7 h-7" @click.stop="cambiarCantidad(reserva, 1)" :disabled="!reserva.aforo_disponible" />
+                                        </div>
+                                        <p v-else class="text-sm font-medium">{{ reserva.cantidad }} {{ reserva.cantidad > 1 ? 'Personas' : 'Persona' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -131,12 +136,37 @@
 
         <!-- Renderizo el componente de dialogo de confirmacion necesario para el borrado -->
         <ConfirmDialog></ConfirmDialog>
+
+        <!-- Diálogo de detalles del evento -->
+        <Dialog v-model:visible="displayDialog" modal :header="selectedEvento?.nombre" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" :dismissableMask="true" class="event-detail-dialog">
+            <template v-if="selectedEvento">
+                <img v-if="selectedEvento.imagen" :src="selectedEvento.imagen" :alt="selectedEvento.nombre" class="w-full h-auto max-h-96 object-cover mb-6 rounded-2xl shadow-sm" />
+                <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-gray-600 dark:text-gray-400">
+                    <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-gray-700">
+                        <i class="pi pi-calendar text-blue-500"></i>
+                        <span class="font-medium">{{ formatDate(selectedEvento.fecha_inicio) }}</span>
+                    </div>
+                    <div v-if="selectedEvento.aforo" class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-gray-700">
+                        <i class="pi pi-users text-green-500"></i>
+                        <span class="font-medium">Aforo: {{ selectedEvento.aforo }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800 ml-auto">
+                        <span class="text-xl font-black text-blue-600 dark:text-blue-400">
+                            {{ selectedEvento.precio > 0 ? selectedEvento.precio + '€' : 'Gratis' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line mb-4 bg-gray-50/50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
+                    {{ selectedEvento.descripcion }}
+                </div>
+            </template>
+        </Dialog>
     </div>
 </template>
 
 <script setup>
 // Traigo las herramientas para manejar las reservas
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import useReservas from '@/composables/reservas';
 import useCarrito from '@/composables/carrito';
 import { useConfirm } from "primevue/useconfirm";
@@ -144,8 +174,30 @@ import { useToast } from '@/composables/useToast';
 
 const confirm = useConfirm();
 const toast = useToast();
-const { reservas, isLoading, getReservas, solicitarCancelacion, eliminarReserva } = useReservas();
+const { reservas, isLoading, getReservas, solicitarCancelacion, eliminarReserva, actualizarCantidad } = useReservas();
 const { agregarAlCarrito, carrito } = useCarrito();
+
+const displayDialog = ref(false);
+const selectedEvento = ref(null);
+
+// Muestro los detalles del evento en un dialogo
+const showDetalles = (evento) => {
+    selectedEvento.value = evento;
+    displayDialog.value = true;
+};
+
+// Cambio la cantidad de entradas de la reserva
+const cambiarCantidad = async (reserva, delta) => {
+    const nuevaCantidad = reserva.cantidad + delta;
+    if (nuevaCantidad < 1) return;
+    
+    try {
+        await actualizarCantidad(reserva.id_reserva, nuevaCantidad);
+        toast.info('Actualizado', 'Cantidad actualizada correctamente');
+    } catch (error) {
+        // El error ya lo maneja el composable
+    }
+};
 
 // Filtro la lista completa para quedarme solo con las reservas activas (pendientes o canceladas)
 const reservasActivas = computed(() => {
