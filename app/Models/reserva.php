@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-// Soy el modelo que representa una reserva de un usuario en un evento
+// Es el modelo que representa una reserva de un usuario en un evento
 class Reserva extends Model
 {
-    // Tabla donde guardo las reservas
+    // Tabla donde guarda las reservas
     protected $table = 'reservas';
     
-    // El id de la reserva es mi llave principal
+    // El id de la reserva es la clave principal
     protected $primaryKey = 'id_reserva';
 
     // Estos campos los puedo llenar todos de una vez
@@ -23,7 +23,7 @@ class Reserva extends Model
     ];
 
     /**
-     * Saco los datos del usuario que hizo esta reserva
+     * Saca los datos del usuario que hizo esta reserva
      */
     public function usuario()
     {
@@ -31,7 +31,7 @@ class Reserva extends Model
     }
 
     /**
-     * Saco los datos del evento que se ha reservado
+     * Saca los datos del evento que se ha reservado
      */
     public function evento()
     {

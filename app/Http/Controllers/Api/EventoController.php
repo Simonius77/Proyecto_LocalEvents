@@ -53,14 +53,14 @@ class EventoController extends Controller
      */
     public function store(StoreEventoRequest $request)
     {
-        // Saco los datos limpios y le pongo quien es el jefe (el usuario logueado)
+        // Saca los datos limpios y le pongo quien es el jefe (el usuario logueado)
         $validatedData = $request->validated();
         $validatedData['id_organizador'] = Auth::id();
 
-        // Creo el evento con los datos que me han pasado
+        // Crea el evento con los datos que me han pasado
         $evento = Evento::create($validatedData);
 
-        // Si me han mandado una foto, yo la guardo donde toca
+        // Si me han mandado una foto, la guardo donde toca
         if ($request->hasFile('imagen')) {
             $evento->addMediaFromRequest('imagen')->toMediaCollection('imagenes_eventos');
         }
@@ -69,7 +69,7 @@ class EventoController extends Controller
     }
 
     /**
-     * Enseño los datos de un evento concreto
+     * Enseña los datos de un evento concreto
      */
     public function show(Evento $evento)
     {
@@ -77,20 +77,20 @@ class EventoController extends Controller
     }
 
     /**
-     * Actualizo los datos de un evento si el usuario tiene permiso para hacerlo
+     * Actualiza los datos de un evento si el usuario tiene permiso para hacerlo
      */
     public function update(Evento $evento, UpdateEventoRequest $request)
     {
         $user = Auth::user();
         
-        // Miro si es el admin o el dueño del evento para dejarle editar
+        // Mira si es el admin o el dueño del evento para dejarle editar
         $isAuthorized = in_array($user->rol, ['admin', 'administrador']) || $user->id_usuario === $evento->id_organizador;
         
         if (!$isAuthorized) {
             return response()->json(['message' => 'No tienes permiso para editar este evento'], 403);
         }
 
-        // Guardo los cambios en el texto
+        // Guarda los cambios en el texto
         $evento->update($request->validated());
 
         // Si hay una foto nueva, borro la vieja y pongo la de ahora
@@ -103,7 +103,7 @@ class EventoController extends Controller
     }
 
     /**
-     * Borro un evento del sistema si se tiene el permiso adecuado
+     * Borra un evento del sistema si se tiene el permiso adecuado
      */
     public function destroy(Evento $evento)
     {
@@ -121,7 +121,7 @@ class EventoController extends Controller
     }
 
     /**
-     * Traigo todos los eventos sin filtros para usarlos rapido en otras partes
+     * Trae todos los eventos sin filtros para usarlos rapido en otras partes
      */
     public function getList()
     {
