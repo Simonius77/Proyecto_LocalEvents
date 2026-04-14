@@ -63,7 +63,7 @@
               <p class="location">{{ event.location }}</p>
               <p class="price">Desde {{ event.price }}</p>
 
-              <Button :href="event.url" label="Reservar" severity="primary" class="btn-reservar" />
+              <Button as="router-link" :to="event.url" label="Reservar" severity="primary" class="btn-reservar" />
             </div>
           </article>
         </div>
@@ -88,7 +88,7 @@
         </div>
 
         <div class="categories-cta">
-          <Button href="/categorias" label="Ver todas las categorías" severity="primary" class="btn-reservar" />
+          <Button as="router-link" to="/categorias" label="Ver todas las categorías" severity="primary" class="btn-reservar" />
         </div>
       </div>
     </section>
@@ -96,68 +96,69 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import Button from 'primevue/button'
 
 const search = ref('')
+const popularEvents = ref([])
+const categories = ref([])
+const isLoading = ref(false)
 
-const popularEvents = [
-  {
-    id: 1,
-    title: 'Tributo a queen',
-    location: 'Sala Riviera, Madrid',
-    price: '25€',
-    image: '/images/Queen.png',
-    url: '/eventos/concierto-tributo-a-queen',
-  },
-  {
-    id: 2,
-    title: 'Cena a ciegas',
-    location: 'C/ Desengaño 21, Barcelona',
-    price: '25€',
-    image: '/images/Cena_a_Ciegas.png',
-    url: '/eventos/cena-a-ciegas',
-  },
-  {
-    id: 3,
-    title: 'Musical Anastasia',
-    location: 'Gran Vía 78, Madrid',
-    price: '45€',
-    image: '/images/Anastasia.png',
-    url: '/eventos/musical-anastasia',
-  },
-]
+const fetchData = async () => {
+  isLoading.value = true
+  try {
+    // Traemos los eventos mas recientes o populares (por ahora los 3 ultimos)
+    const eventosRes = await axios.get('/api/eventos', {
+      params: { order_column: 'created_at', order_direction: 'desc' }
+    })
+    
+    // Mapeamos los datos de la API al formato que espera el diseño
+    popularEvents.value = (eventosRes.data?.data || eventosRes.data).slice(0, 3).map(e => ({
+      id: e.id_evento,
+      title: e.nombre,
+      location: e.localizacion || 'Sin ubicación',
+      price: e.precio ? `${e.precio}€` : 'Gratis',
+      image: e.imagen || '/images/eventomuestra.webp',
+      url: `/eventos/${e.id_evento}`
+    }))
 
-const categories = [
-  {
-    id: 1,
-    name: 'Conciertos',
-    icon: '/images/conciertos.png',
-  },
-  {
-    id: 2,
-    name: 'Teatro',
-    icon: '/images/teatro.png',
-  },
-  {
-    id: 3,
-    name: 'Gastronomía',
-    icon: '/images/gastronomia.png',
-  },
-  {
-    id: 4,
-    name: 'Exposiciones',
-    icon: '/images/exposiciones.png',
-  },
-]
+    // Traemos las categorias
+    const catRes = await axios.get('/api/categorias')
+    categories.value = (catRes.data?.data || catRes.data).slice(0, 4).map(c => ({
+      id: c.id_categoria,
+      name: c.nombre,
+      // Como las categorias no tienen icono en la DB, usamos uno por defecto segun el nombre
+      icon: getCategoryIcon(c.nombre)
+    }))
+  } catch (err) {
+    console.error('Error cargando datos de la home:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Funcion para asignar iconos/fotos a las categorias si no vienen de la DB
+const getCategoryIcon = (name) => {
+  const map = {
+    'Conciertos': '/images/conciertos.png',
+    'Teatro': '/images/teatro.png',
+    'Gastronomía': '/images/gastronomia.png',
+    'Exposiciones': '/images/exposiciones.png'
+  }
+  return map[name] || '/images/eventomuestra.webp'
+}
+
+onMounted(fetchData)
 
 const searchEvents = () => {
-  if (!search.value.trim()) {
+  const query = search.value.trim()
+  if (!query) {
     window.location.href = '/buscar-eventos'
     return
   }
 
-  window.location.href = `/buscar-eventos?q=${encodeURIComponent(search.value)}`
+  window.location.href = `/buscar-eventos?q=${encodeURIComponent(query)}`
 }
 </script>
 

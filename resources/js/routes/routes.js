@@ -142,6 +142,11 @@ export default [
                 component: () => import('../views/auth/passwords/Reset.vue'),
                 beforeEnter: guest,
             },
+            {
+                path: 'eventos/:id',
+                name: 'public.eventos.show',
+                component: () => import('../views/public/evento/show.vue'),
+            },
         ]
     },
 

@@ -77,14 +77,17 @@ class AuthenticatedSessionController extends Controller
     public function register(RegisterRequest $request)
     {
         $user = User::create([
+            'nombre' => $request['nombre'],
+            'apellidos' => $request['apellidos'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
-            'name' => $request['name'],
-            'surname1' => $request['surname1'],
-            'surname2' => $request['surname2'],
+            'latitud' => $request['latitud'],
+            'longitud' => $request['longitud'],
+            'rol' => 'usuario', // Rol por defecto segun el modelo
+            'activo' => true
         ]);
 
-        $role = Role::where('name', 'user')->first();
+        $role = Role::where('nombre', 'user')->orWhere('name', 'user')->first();
         if ($role) {
             $user->assignRole($role);
         }
