@@ -13,47 +13,74 @@
       <!-- Event Header -->
       <Card class="evento-header-card">
         <template #content>
-          <div class="space-y-4">
-            <h1 class="text-4xl font-bold text-surface-900 dark:text-surface-0">{{ evento.nombre }}</h1>
-            <p class="text-lg text-surface-600 dark:text-surface-400">{{ evento.descripcion }}</p>
+          <div class="flex flex-col md:flex-row gap-8">
+            <div class="flex-1 space-y-4">
+              <h1 class="text-4xl font-bold text-surface-900 dark:text-surface-0">{{ evento.nombre }}</h1>
+              <p class="text-lg text-surface-600 dark:text-surface-400">{{ evento.descripcion }}</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              <div class="flex items-start gap-3">
-                <i class="pi pi-calendar text-xl text-primary-500"></i>
-                <div>
-                  <p class="text-sm text-surface-600 dark:text-surface-400">Fecha de inicio</p>
-                  <p class="font-medium">{{ formatDate(evento.fecha_inicio) }}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-calendar text-xl text-primary-500"></i>
+                  <div>
+                    <p class="text-sm text-surface-600 dark:text-surface-400">Fecha de inicio</p>
+                    <p class="font-medium">{{ formatDate(evento.fecha_inicio) }}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div class="flex items-start gap-3">
-                <i class="pi pi-clock text-xl text-primary-500"></i>
-                <div>
-                  <p class="text-sm text-surface-600 dark:text-surface-400">Fecha de fin</p>
-                  <p class="font-medium">{{ formatDate(evento.fecha_fin) }}</p>
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-clock text-xl text-primary-500"></i>
+                  <div>
+                    <p class="text-sm text-surface-600 dark:text-surface-400">Fecha de fin</p>
+                    <p class="font-medium">{{ formatDate(evento.fecha_fin) }}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div class="flex items-start gap-3">
-                <i class="pi pi-dollar text-xl text-success-500"></i>
-                <div>
-                  <p class="text-sm text-surface-600 dark:text-surface-400">Precio</p>
-                  <p class="font-medium">{{ evento.precio ? '$' + evento.precio : 'Gratis' }}</p>
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-dollar text-xl text-success-500"></i>
+                  <div>
+                    <p class="text-sm text-surface-600 dark:text-surface-400">Precio</p>
+                    <p class="font-medium font-mono text-xl">{{ evento.precio > 0 ? evento.precio + '€' : '¡Gratis!' }}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div class="flex items-start gap-3">
-                <i class="pi pi-users text-xl text-info-500"></i>
-                <div>
-                  <p class="text-sm text-surface-600 dark:text-surface-400">Aforo máximo</p>
-                  <p class="font-medium">{{ evento.aforo ?? 'Sin límite' }}</p>
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-users text-xl text-info-500"></i>
+                  <div>
+                    <p class="text-sm text-surface-600 dark:text-surface-400">Aforo máximo</p>
+                    <p class="font-medium">{{ evento.aforo ?? 'Sin límite' }}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="flex gap-4 mt-8">
-              <Button label="Reservar" icon="pi pi-ticket" severity="primary" size="large" as="router-link" to="#" />
-              <Button label="Compartir evento" icon="pi pi-share-alt" severity="secondary" size="large" text />
+            <!-- Booking Section -->
+            <div class="md:w-80 bg-surface-50 dark:bg-surface-900 p-6 rounded-2xl border border-surface-200 dark:border-surface-800 space-y-6 self-start">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-surface-600 dark:text-surface-400">¿Cuántas personas vendréis?</label>
+                <InputNumber v-model="cantidad" mode="decimal" showButtons :min="1" :max="evento.aforo || 10" fluid class="w-full" />
+              </div>
+
+              <div class="space-y-3">
+                <Button 
+                  label="Reservar" 
+                  icon="pi pi-ticket" 
+                  severity="primary" 
+                  size="large" 
+                  fluid 
+                  class="w-full font-bold shadow-lg shadow-primary-500/20"
+                  :loading="isSubmitting"
+                  @click="handleReservar"
+                />
+                
+                <div class="text-center">
+                   <p class="text-2xl font-black text-primary-500">{{ (evento.precio * cantidad).toFixed(2) }}€</p>
+                   <p class="text-[10px] uppercase font-bold text-surface-400">Total a pagar</p>
+                </div>
+              </div>
+
+              <Divider />
+              
+              <Button label="Compartir evento" icon="pi pi-share-alt" severity="secondary" fluid text size="small" />
             </div>
           </div>
         </template>
@@ -112,7 +139,7 @@
           </Card>
         </div>
 
-        <!-- Sidebar -->
+        <!-- Sidebar Details -->
         <div class="space-y-6">
           <!-- Dates Summary -->
           <Card>
@@ -138,22 +165,6 @@
               </div>
             </template>
           </Card>
-
-          <!-- Event Stats -->
-          <Card>
-            <template #title>
-              <i class="pi pi-chart-bar"></i> Estadísticas
-            </template>
-            <template #content>
-              <div class="space-y-3 text-sm">
-                <Tag
-                  :value="`Aforo: ${evento.aforo ?? 'Ilimitado'}`"
-                  :severity="evento.aforo ? 'info' : 'success'"
-                  class="w-full"
-                />
-              </div>
-            </template>
-          </Card>
         </div>
       </div>
     </div>
@@ -169,13 +180,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { authStore } from "@/store/auth"
 
 const route = useRoute()
+const router = useRouter()
+const auth = authStore()
+const swal = inject('$swal')
+
 const evento = ref(null)
 const isLoading = ref(false)
+const isSubmitting = ref(false)
+const cantidad = ref(1)
 
 const formatDate = (v) => {
   if (!v) return '-'
@@ -213,6 +231,7 @@ const getDuration = () => {
     const start = new Date(evento.value.fecha_inicio)
     const end = new Date(evento.value.fecha_fin)
     const diffMs = end - start
+    if (diffMs < 0) return '-'
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
     const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
 
@@ -238,6 +257,43 @@ const getEvento = async () => {
   }
 }
 
+const handleReservar = async () => {
+  if (!auth.authenticated) {
+    router.push({ name: 'public.login' })
+    return
+  }
+
+  isSubmitting.value = true
+  try {
+    const response = await axios.post('/api/reservas', {
+      id_evento: evento.value.id_evento,
+      cantidad: cantidad.value
+    })
+
+    swal({
+      icon: 'success',
+      title: '¡Reserva realizada!',
+      text: 'Tu reserva se ha registrado correctamente. Puedes verla en el panel de control.',
+      confirmButtonText: 'Ir a mis reservas',
+      showCancelButton: true,
+      cancelButtonText: 'Seguir mirando'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push({ name: 'app.reservas' })
+      }
+    })
+  } catch (error) {
+    console.error('Error reserving:', error)
+    swal({
+      icon: 'error',
+      title: 'Error al reservar',
+      text: error.response?.data?.message || 'No se pudo completar la reserva. Inténtalo de nuevo más tarde.'
+    })
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
 onMounted(getEvento)
 </script>
 
@@ -249,6 +305,6 @@ onMounted(getEvento)
 }
 
 .evento-header-card :deep(.p-card-content) {
-  padding: 2rem;
+  padding: 2.5rem;
 }
 </style>

@@ -133,3 +133,11 @@ Explicacion de su función de forma simple:
 
 Para implementar la geolocalizacion de los usuarios he creado la rama de geolocalizacion.
 Los usuarios al registrarse se les pedira permiso para acceder a su ubicacion y se guardara en la base de datos.
+
+## CATEGORIAS
+
+Conciertos
+Teatro
+Gastronomia
+Exposiciones
+Deportes
