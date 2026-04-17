@@ -62,8 +62,7 @@
               <h3>{{ event.title }}</h3>
               <p class="location">{{ event.location }}</p>
               <p class="price">Desde {{ event.price }}</p>
-
-              <Button as="router-link" :to="event.url" label="Reservar" severity="primary" class="btn-reservar" />
+              <Button @click="handleReservarHome(event.url)" label="Reservar" severity="primary" class="btn-reservar" />
             </div>
           </article>
         </div>
@@ -101,11 +100,15 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import Button from 'primevue/button'
+import { authStore } from '@/store/auth'
+import { useRouter } from 'vue-router'
 
 const search = ref('')
 const popularEvents = ref([])
 const categories = ref([])
 const isLoading = ref(false)
+const auth = authStore()
+const router = useRouter()
 
 const fetchData = async () => {
   isLoading.value = true
@@ -165,6 +168,14 @@ const searchEvents = () => {
 
 const searchByCategory = (categoryName) => {
   window.location.href = `/buscar-eventos?q=${encodeURIComponent(categoryName)}`
+}
+
+const handleReservarHome = (url) => {
+  if (!auth.authenticated) {
+    router.push({ name: 'public.login' })
+  } else {
+    router.push(url)
+  }
 }
 </script>
 
