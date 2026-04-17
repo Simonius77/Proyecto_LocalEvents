@@ -51,13 +51,6 @@ class CategoriasTableSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ),
-            4 => 
-            array (
-                'id_categoria' => 5,
-                'nombre' => 'Deportes',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ),
         ));
         
         

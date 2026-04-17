@@ -22,6 +22,7 @@ OJO con la instalacion de Pinia, te desconfigura el proyecto, no lo instales. no
 
 ```bash
 php artisan serve
+
 ```
 
 ### Arrancar servidor
