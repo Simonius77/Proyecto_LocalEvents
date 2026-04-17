@@ -88,7 +88,7 @@ class EventosTableSeeder extends Seeder
                 'limite_edad' => '+18',
                 'fecha_inicio' => '2026-04-16 20:29:00',
                 'fecha_fin' => '2026-05-16 17:26:00',
-                'id_categoria' => 5,
+                'id_categoria' => 1,
                 'id_organizador' => 5,
                 'created_at' => '2026-04-07 15:26:55',
                 'updated_at' => '2026-04-07 15:26:55',
