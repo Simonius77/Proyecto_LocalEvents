@@ -76,15 +76,17 @@
         <h2 class="section-title">Eventos por categoría</h2>
 
         <div class="categories-grid">
-          <article
+          <button
             v-for="category in categories"
             :key="category.id"
             class="category-card"
+            @click="searchByCategory(category.name)"
+            aria-label="'Buscar ' + category.name"
           >
             <div class="category-icon-wrap">
               <img :src="category.icon" :alt="category.name" class="category-icon" />
             </div>
-          </article>
+          </button>
         </div>
 
         <div class="categories-cta">
@@ -124,7 +126,7 @@ const fetchData = async () => {
     }))
 
     // Traemos las categorias
-    const catRes = await axios.get('/api/categorias')
+    const catRes = await axios.get('/api/category-list')
     categories.value = (catRes.data?.data || catRes.data).slice(0, 4).map(c => ({
       id: c.id_categoria,
       name: c.nombre,
@@ -140,13 +142,13 @@ const fetchData = async () => {
 
 // Funcion para asignar iconos/fotos a las categorias si no vienen de la DB
 const getCategoryIcon = (name) => {
-  const map = {
-    'Conciertos': '/images/conciertos.png',
-    'Teatro': '/images/teatro.png',
-    'Gastronomía': '/images/gastronomia.png',
-    'Exposiciones': '/images/exposiciones.png'
-  }
-  return map[name] || '/images/eventomuestra.webp'
+  const normalized = name ? name.toLowerCase() : '';
+  if (normalized.includes('concierto')) return '/images/conciertos.png';
+  if (normalized.includes('teatro')) return '/images/teatro.png';
+  if (normalized.includes('gastronom')) return '/images/gastronomia.png';
+  if (normalized.includes('exposicion')) return '/images/exposiciones.png';
+  
+  return '/images/eventomuestra.webp'
 }
 
 onMounted(fetchData)
@@ -159,6 +161,10 @@ const searchEvents = () => {
   }
 
   window.location.href = `/buscar-eventos?q=${encodeURIComponent(query)}`
+}
+
+const searchByCategory = (categoryName) => {
+  window.location.href = `/buscar-eventos?q=${encodeURIComponent(categoryName)}`
 }
 </script>
 
@@ -470,21 +476,47 @@ const searchEvents = () => {
 
 .category-card {
   text-align: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
 }
 
 .category-icon-wrap {
   background: #f4f4f4;
-  border-radius: 6px;
+  border-radius: 20px;
   padding: 0;
   margin-bottom: 14px;
+  width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 .category-icon {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+  transform: scale(1.05);
+}
+
+.category-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #171717;
+  margin: 0;
 }
 
 .categories-cta {
