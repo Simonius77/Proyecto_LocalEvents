@@ -42,6 +42,9 @@ class EventoController extends Controller
                         ->orWhere('nombre', 'like', '%' . request('search_global') . '%');
                 });
             })
+            ->when(request('search_categoria'), function ($query) {
+                $query->where('id_categoria', request('search_categoria'));
+            })
             ->orderBy($orderColumn, $orderDirection)
             ->paginate(50);
 

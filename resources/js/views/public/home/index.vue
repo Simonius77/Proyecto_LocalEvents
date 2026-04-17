@@ -79,8 +79,8 @@
             v-for="category in categories"
             :key="category.id"
             class="category-card"
-            @click="searchByCategory(category.name)"
-            aria-label="'Buscar ' + category.name"
+            @click="searchByCategory(category.id)"
+            :aria-label="'Buscar ' + category.name"
           >
             <div class="category-icon-wrap">
               <img :src="category.icon" :alt="category.name" class="category-icon" />
@@ -159,15 +159,14 @@ onMounted(fetchData)
 const searchEvents = () => {
   const query = search.value.trim()
   if (!query) {
-    window.location.href = '/buscar-eventos'
+    router.push({ name: 'public.buscar-eventos' })
     return
   }
-
-  window.location.href = `/buscar-eventos?q=${encodeURIComponent(query)}`
+  router.push({ name: 'public.buscar-eventos', query: { q: query } })
 }
 
-const searchByCategory = (categoryName) => {
-  window.location.href = `/buscar-eventos?q=${encodeURIComponent(categoryName)}`
+const searchByCategory = (categoryId) => {
+  router.push({ name: 'public.buscar-eventos', query: { categoria: categoryId } })
 }
 
 const handleReservarHome = (url) => {
