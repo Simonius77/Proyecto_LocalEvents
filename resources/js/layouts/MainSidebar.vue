@@ -79,10 +79,12 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAbility } from '@casl/vue';
+import { authStore } from '../store/auth';
 
 const route = useRoute();
 const router = useRouter();
 const { can } = useAbility();
+const auth = authStore();
 
 const props = defineProps({
     sidebarOpen: {
@@ -101,6 +103,17 @@ const props = defineProps({
 
 const emit = defineEmits(['toggleSidebar', 'toggleCollapse']);
 
+// Verificamos el rol de forma robusta
+const isAdmin = computed(() => {
+    return auth.user?.roles?.some(r => r.name?.toLowerCase().includes('admin')) || 
+           auth.user?.rol === 'administrador';
+});
+
+const isOrganizador = computed(() => {
+    return auth.user?.roles?.some(r => r.name?.toLowerCase().includes('organizador')) || 
+           auth.user?.rol === 'organizador';
+});
+
 // Decido que opciones aparecen en el menu de la izquierda segun los permisos
 const menuModel = computed(() => {
     if (props.menuItems) {
@@ -111,40 +124,50 @@ const menuModel = computed(() => {
     const items = [
         {
             icon: 'pi pi-home',
-            label: 'Principal',
+            label: 'Consola',
              items: [
-                { label: 'Dashboard', icon: 'pi pi-compass', route: '/admin', permission: 'all' }
+                // Si es admin, le mando al dashboard de admin
+                ...(isAdmin.value ? [{ label: 'Dashboard Admin', icon: 'pi pi-chart-bar', route: '/admin', permission: 'all' }] : []),
+                // Si es organizador (o admin), puede entrar al panel de organizador
+                ...(isOrganizador.value || isAdmin.value ? [{ label: 'Panel Organizador', icon: 'pi pi-calendar-plus', route: '/organizador', permission: 'all' }] : []),
+                // Siempre damos una forma de volver a la web principal
+                { label: 'Volver a la Web', icon: 'pi pi-external-link', route: '/', permission: 'all' }
             ]
         },
-        {
-            label: 'Gestion',
+        // Solo para Administradores: Gestion de sistema
+        ...(isAdmin.value ? [{
+            label: 'Seguridad',
             items: [
                 { label: 'Usuarios', icon: 'pi pi-users', route: '/admin/users', permission: 'user-list' },
                 { label: 'Roles', icon: 'pi pi-shield', route: '/admin/roles', permission: 'role-list' },
                 { label: 'Permisos', icon: 'pi pi-key', route: '/admin/permissions', permission: 'permission-list' }
             ]
-        },
+        }] : []),
+        
+        // Gestion de Contenido (Admin ve todo, Organizador ve lo suyo)
         {
             label: 'Contenido',
             items: [
-                { label: 'Categorias', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' },
-                { label: 'Eventos', icon: 'pi pi-calendar', route: '/admin/eventos', permission: 'all' }
+                // Solo admin gestiona categorias globales
+                ...(isAdmin.value ? [{ label: 'Categorías', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' }] : []),
+                // El administrador gestiona todos los eventos
+                ...(isAdmin.value ? [{ label: 'Todos los Eventos', icon: 'pi pi-calendar', route: '/admin/eventos', permission: 'all' }] : [])
             ]
         }
     ];
 
     // Filtro la lista para enseñar solo lo que el usuario puede ver
     return items.filter(item => {
-        if (item.permission && item.permission !== 'all') {
-            if (!can(item.permission)) return false;
-        }
-        if (item.items) {
-            item.items = item.items.filter(child => {
-                return !child.permission || can(child.permission);
-            });
-            return item.items.length > 0;
-        }
-        return true;
+        if (!item.items) return true;
+        
+        item.items = item.items.filter(child => {
+            if (child.permission && child.permission !== 'all') {
+                return can(child.permission);
+            }
+            return true;
+        });
+        
+        return item.items.length > 0;
     });
 });
 </script>

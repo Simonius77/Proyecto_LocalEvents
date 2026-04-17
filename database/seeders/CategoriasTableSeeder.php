@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CategoriasTableSeeder extends Seeder
 {
@@ -16,78 +18,45 @@ class CategoriasTableSeeder extends Seeder
     {
         
 
-        \DB::table('categorias')->delete();
+        DB::table('categorias')->delete();
         
-        \DB::table('categorias')->insert(array (
+        $now = Carbon::now();
+
+        DB::table('categorias')->insert(array (
             0 => 
             array (
                 'id_categoria' => 1,
-                'nombre' => 'Tecnología',
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'nombre' => 'Conciertos',
+                'created_at' => $now,
+                'updated_at' => $now,
             ),
             1 => 
             array (
                 'id_categoria' => 2,
-                'nombre' => 'Programación',
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'nombre' => 'Teatro',
+                'created_at' => $now,
+                'updated_at' => $now,
             ),
             2 => 
             array (
                 'id_categoria' => 3,
-                'nombre' => 'Diseño Web',
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'nombre' => 'Gastronomia',
+                'created_at' => $now,
+                'updated_at' => $now,
             ),
             3 => 
             array (
                 'id_categoria' => 4,
-                'nombre' => 'Tutoriales',
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'nombre' => 'Exposiciones',
+                'created_at' => $now,
+                'updated_at' => $now,
             ),
             4 => 
             array (
                 'id_categoria' => 5,
-                'nombre' => 'Noticias',
-                'created_at' => NULL,
-                'updated_at' => NULL,
-            ),
-            5 => 
-            array (
-                'id_categoria' => 6,
-                'nombre' => 'Opinión',
-                'created_at' => NULL,
-                'updated_at' => NULL,
-            ),
-            6 => 
-            array (
-                'id_categoria' => 7,
-                'nombre' => 'Recursos',
-                'created_at' => NULL,
-                'updated_at' => NULL,
-            ),
-            7 => 
-            array (
-                'id_categoria' => 8,
-                'nombre' => 'Laravel',
-                'created_at' => NULL,
-                'updated_at' => NULL,
-            ),
-            8 => 
-            array (
-                'id_categoria' => 9,
-                'nombre' => 'Vue.js',
-                'created_at' => NULL,
-                'updated_at' => NULL,
-            ),
-            9 => 
-            array (
-                'id_categoria' => 10,
-                'nombre' => 'General',
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'nombre' => 'Deportes',
+                'created_at' => $now,
+                'updated_at' => $now,
             ),
         ));
         

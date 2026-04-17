@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-// Soy el modelo que gestiona la informacion de los eventos
+// Este es el modelo que gestiona la informacion de los eventos
 class Evento extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-    // Nombre de la tabla en mi base de datos
+    // Nombre de la tabla en la base de datos
     protected $table = 'eventos';
     
     // Identificador unico del evento
@@ -35,7 +35,7 @@ class Evento extends Model implements HasMedia
     ];
 
     /**
-     * Saco la categoria a la que pertenece este evento
+     * Saca la categoria a la que pertenece este evento
      */
     public function categoria()
     {
@@ -43,7 +43,7 @@ class Evento extends Model implements HasMedia
     }
 
     /**
-     * Busco al usuario que ha organizado este evento
+     * Busca al usuario que ha organizado este evento
      */
     public function organizador()
     {
@@ -51,7 +51,7 @@ class Evento extends Model implements HasMedia
     }
 
     /**
-     * Traigo todas las reservas que se han hecho para este evento
+     * Trae todas las reservas que se han hecho para este evento
      */
     public function reservas()
     {

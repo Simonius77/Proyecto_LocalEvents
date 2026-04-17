@@ -7,15 +7,15 @@ use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Resources\CategoriaResource;
 use App\Models\Categoria;
 
-// Gestiono las categorias de los eventos a traves de la API
+// Gestiona las categorias de los eventos a traves de la API
 class CategoriaController extends Controller
 {
     /**
-     * Saco la lista de todas las categorias con filtros y paginacion
+     * Saca la lista de todas las categorias con filtros y paginacion
      */
     public function index()
     {
-        // Elijo como ordenar los resultados
+        // Elige como ordenar los resultados
         $orderColumn = request('order_column', 'created_at');
         if (!in_array($orderColumn, ['id_categoria', 'nombre', 'created_at'])) {
             $orderColumn = 'created_at';
@@ -26,7 +26,7 @@ class CategoriaController extends Controller
             $orderDirection = 'desc';
         }
 
-        // Busco las categorias segun lo que el usuario pida
+        // Busca las categorias segun lo que el usuario pida
         $categories = Categoria::
             when(request('search_id'), function ($query) {
                 $query->where('id_categoria', request('search_id'));
@@ -48,20 +48,20 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Guardo una categoria nueva si el usuario tiene permiso
+     * Guarda una categoria nueva si el usuario tiene permiso
      */
     public function store(StoreCategoriaRequest $request)
     {
         $this->authorize('category-create');
 
-        // Creo la categoria con los datos validados
+        // Crea la categoria con los datos validados
         $category = Categoria::create($request->validated());
 
         return new CategoriaResource($category);
     }
 
     /**
-     * Enseño los detalles de una categoria especifica
+     * Enseña los detalles de una categoria especifica
      */
     public function show(Categoria $category)
     {
@@ -70,20 +70,20 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Actualizo los datos de una categoria que ya existe
+     * Actualiza los datos de una categoria que ya existe
      */
     public function update(Categoria $category, StoreCategoriaRequest $request)
     {
         $this->authorize('category-edit');
 
-        // Cambio los datos de la categoria
+        // Cambia los datos de la categoria
         $category->update($request->validated());
 
         return new CategoriaResource($category);
     }
 
     /**
-     * Borro la categoria para siempre de la base de datos
+     * Borra la categoria para siempre de la base de datos
      */
     public function destroy(Categoria $category)
     {
@@ -94,7 +94,7 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Saco la lista completa de categorias sin paginar para los selectores
+     * Saca la lista completa de categorias sin paginar para los selectores
      */
     public function getList()
     {
